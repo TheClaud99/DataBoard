@@ -1,25 +1,36 @@
 import java.util.Iterator;
 import java.util.List;
 
-public interface DataBoard<E extends Data> {
+public interface DataBoard<E extends Data<?>> {
     /**
      * 
      * Overview:    contenitore di oggetti generici che estendono il tipo di dato Data. Ogni
      *              dato presente nella bacheca ha associato la categoria del dato.
      * 
-     * TE:          <password, friends = { friend[1], friend[2], ..., firend[numFriends()] }, categories = { category[1], ....., category[numCategories()] }, dataSet = { data[1], ....., data[numData()] }>
-     *              con (forall i = 1,...., num_data | data[i].category != null && (exist j = 1, ..., numCategories() | data[i].category = category[j]))
+     * TE:          <password, { 
+     *                  <category[1], 
+     *                      data[1], ...., data[numData(category[1])], 
+     *                      { friend[1], ...., friend[numFirends(category[1])] }>,
+     *                  ...., 
+     *                  <category[numCategories()], 
+     *                      data[1], ...., data[numData(category[numCategories()])], 
+     *                      { friend[1], ...., friend[numFirends(category[numCategories()])] }>
+     *                  }>
+     * 
+     *              con ( forall i = 1,...., numCategories() | category[i] != null ), password != null
      */
 
-    // Crea l’identità una categoria di dati
-     /**
+    /**
+     * Crea l’identità una categoria di dati
      * 
      * @param Category t.c. Category != null && (forall i = 1, ...., numCategories() | categories[i] != Category)
      * @param passw t.c. password = passw
      * @modifies this.categories
-     * @throws NullPointerException 
+     * @throws NullPointerException se Category = null
+     * @throws ExistingCategoryException if (exist i = 1, ..., numCategories() | category[i] = Category)
+     * @effects post(this.category) = pre(this.category) U Category
      */
-    public void createCategory(String Category, String passw);
+    public void createCategory(String Category, String passw) throws NullPointerException;
     
     // Rimuove l’identità una categoria di dati
     /**
@@ -27,10 +38,20 @@ public interface DataBoard<E extends Data> {
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | categories[i] = Category)
      * @param passw t.c. password = this.passw
      * @modifies this.categories
+     * @throws InvalidArgumentExcetpion if (forall i = 1, ..., numCategories() | category[i] != Category)
+     * @effects post(this.category) = pre(this.category) \ Category
      */
     public void removeCategory(String Category, String passw);
 
     // Aggiunge un amico ad una categoria di dati
+    /**
+     * 
+     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | categories[i] = Category)
+     * @param passw t.c. password = this.passw
+     * @modifies this.categories
+     * @throws InvalidArgumentExcetpion if (forall i = 1, ..., numCategories() | category[i] != Category)
+     * @effects post(this.category) = pre(this.category) \ Category
+     */
     public void addFriend(String Category, String passw, String friend);
 
     // rimuove un amico ad una categoria di dati
