@@ -17,6 +17,7 @@ public interface DataBoard<E extends Data> {
      * @param Category t.c. Category != null && (forall i = 1, ...., numCategories() | categories[i] != Category)
      * @param passw t.c. password = passw
      * @modifies this.categories
+     * @throws NullPointerException 
      */
     public void createCategory(String Category, String passw);
     
