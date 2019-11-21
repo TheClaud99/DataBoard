@@ -80,6 +80,15 @@ public interface DataBoard<E extends Data<?>> {
 
     // Rimuove il dato dalla bacheca
     // se vengono rispettati i controlli di identità
+    /**
+     * 
+     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
+     * @param dato t.c. dato != null
+     * @param passw t.c. password = this.password
+     * @modifies this.el_i.data
+     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato
+     */
     public E remove(String passw, E dato);
 
     // Crea la lista dei dati in bacheca su una determinata categoria
