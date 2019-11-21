@@ -7,54 +7,58 @@ public interface DataBoard<E extends Data<?>> {
      * Overview:    contenitore di oggetti generici che estendono il tipo di dato Data. Ogni
      *              dato presente nella bacheca ha associato la categoria del dato.
      * 
-     * TE:          <password, { 
-     *                  <category[1], 
-     *                      data[1], ...., data[numData(category[1])], 
-     *                      { friend[1], ...., friend[numFirends(category[1])] }>,
-     *                  ...., 
-     *                  <category[numCategories()], 
-     *                      data[1], ...., data[numData(category[numCategories()])], 
-     *                      { friend[1], ...., friend[numFirends(category[numCategories()])] }>
-     *                  }>
-     * 
-     *              con ( forall i = 1,...., numCategories() | category[i] != null ), password != null
+     * TE:          <password, elems = { el_0, ..., el_i, ..., el_numCategories() }> con
+     *                  el_i = <categoryName, dataSet, friends> con
+     *                      categoryName != null    
+     *                      dataSet = data_0, ..., data_j, ...., data_numData(el_i.categoryName) lista ordinata
+     *                      friends = { friend_0, ..., friend_k, ..., firend_numFriends(el_i.categoryName()) }
+     *              password != null
      */
 
     /**
      * Crea l’identità una categoria di dati
      * 
-     * @param Category t.c. Category != null && (forall i = 1, ...., numCategories() | categories[i] != Category)
+     * @param Category t.c. Category != null && (forall i = 1, ...., numCategories() | el_i.categoryName != Category)
      * @param passw t.c. password = passw
-     * @modifies this.categories
+     * @modifies this.elems
      * @throws NullPointerException se Category = null
-     * @throws ExistingCategoryException if (exist i = 1, ..., numCategories() | category[i] = Category)
-     * @effects post(this.category) = pre(this.category) U Category
+     * @throws ExistingCategoryException if (exist i = 1, ..., numCategories() | el_i.categoryName = Category)
+     * @effects post(this.elems) = pre(this.el_i) U <Category, null, null>
      */
     public void createCategory(String Category, String passw) throws NullPointerException;
     
     // Rimuove l’identità una categoria di dati
     /**
      * 
-     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | categories[i] = Category)
+     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
-     * @modifies this.categories
-     * @throws InvalidArgumentExcetpion if (forall i = 1, ..., numCategories() | category[i] != Category)
-     * @effects post(this.category) = pre(this.category) \ Category
+     * @modifies this.elems
+     * @throws InvalidArgumentExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @effects post(this.elems) = pre(this.elems) \ el_i
      */
     public void removeCategory(String Category, String passw);
 
     // Aggiunge un amico ad una categoria di dati
     /**
      * 
-     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | categories[i] = Category)
+     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
-     * @modifies this.categories
-     * @throws InvalidArgumentExcetpion if (forall i = 1, ..., numCategories() | category[i] != Category)
-     * @effects post(this.category) = pre(this.category) \ Category
+     * @modifies this.el_i.friends
+     * @throws InvalidArgumentExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @effects post(this.el_i.friends) = pre(this.el_i.friends) U friend
      */
     public void addFriend(String Category, String passw, String friend);
 
     // rimuove un amico ad una categoria di dati
+    /**
+     * 
+     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
+     * @param friend t.c. friend != null and (exist j = 1, ...., numFriendns(Category) | el_i.friend[j] = friend)
+     * @param passw t.c. password = this.passw
+     * @modifies this.el_i.friends
+     * @throws InvalidArgumentExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
+     */
     public void removeFriend(String Category, String passw, String friend);
     
     // Inserisce un dato in bacheca
@@ -86,6 +90,6 @@ public interface DataBoard<E extends Data<?>> {
     public Iterator<E> getFriendIterator(String friend);
 
     public int numFriends();
-    public int numCategories();
-    public int numData();
+    public int numCategories(String Category);
+    public int numData(String Category);
 }
