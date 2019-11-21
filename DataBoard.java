@@ -35,6 +35,7 @@ public interface DataBoard<E extends Data<?>> {
      * @param passw t.c. password = this.passw
      * @modifies this.elems
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidPasswordException if passw != this.password
      * @effects post(this.elems) = pre(this.elems) \ el_i
      */
     public void removeCategory(String Category, String passw);
@@ -44,8 +45,11 @@ public interface DataBoard<E extends Data<?>> {
      * 
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
+     * @param friend t.c. friend != null and (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
      * @modifies this.el_i.friends
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws ExistingFriendException if (exist j = 1, ...., numFriendns(Category) | el_i.friend[j] = friend)
+     * @throws InvalidPasswordException if passw != this.password
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) U friend
      */
     public void addFriend(String Category, String passw, String friend);
@@ -58,6 +62,7 @@ public interface DataBoard<E extends Data<?>> {
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.friends
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidPasswordException if passw != this.password
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
     public void removeFriend(String Category, String passw, String friend);
@@ -71,6 +76,7 @@ public interface DataBoard<E extends Data<?>> {
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.data
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidPasswordException if passw != this.password
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
     public boolean put(String passw, E dato, String categoria);
@@ -84,20 +90,40 @@ public interface DataBoard<E extends Data<?>> {
     /**
      * 
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
-     * @param dato t.c. dato != null
+     * @param dato t.c. dato != null && (exist j = 1, ...., numData(el_i.categoryName) | el_i.dataSet[j] = dato)
      * @param passw t.c. password = this.password
      * @modifies this.el_i.data
-     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if (forall k = 1, ..., numCategories() | el_k.categoryName != Category)
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato
+     * @return this.el_i.data[j]
      */
     public E remove(String passw, E dato);
 
     // Crea la lista dei dati in bacheca su una determinata categoria
-    // se vengono rispettati i controlli di identità
+    // se vengono rispettati i controlli di identitàù
+    /**
+     * 
+     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
+     * @param passw t.c. password = this.passw
+     * @modifies this.elems
+     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @return this.el_i.dataSet
+     */
     public List<E> getDataCategory(String passw, String Category);
     
     // restituisce un iteratore (senza remove) che genera tutti i dati in
     // bacheca ordinati rispetto al numero di like.
+    /**
+     * 
+     * @param passw t.c. password = this.passw
+     * @modifies this.elems
+     * @throws InvalidPasswordException if passw != this.password
+     * @return iteratore di data_1, ...., data_n, lista ordinata con
+     *          n = numData(el_1.categoryName) + ... + numData(el_numCategories().categoryName),
+     *          (forall i = 1, ...., n | data_i in this.el_1.dataSet U .... U this.el_numCategories().dataSet) &&
+     *          (forall i,j = 1, ...., n | i < j => data_i.likes < data_j.likes)
+     */
     public Iterator<E> getIterator(String passw);
 
     // Aggiunge un like a un dato
