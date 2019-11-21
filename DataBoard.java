@@ -21,7 +21,8 @@ public interface DataBoard<E extends Data<?>> {
      * @param Category t.c. Category != null && (forall i = 1, ...., numCategories() | el_i.categoryName != Category)
      * @param passw t.c. password = passw
      * @modifies this.elems
-     * @throws NullPointerException se Category = null
+     * @throws NullPointerException if Category = null
+     * @throws InvalidPasswordException if passw != this.password
      * @throws ExistingCategoryException if (exist i = 1, ..., numCategories() | el_i.categoryName = Category)
      * @effects post(this.elems) = pre(this.el_i) U <Category, null, null>
      */
