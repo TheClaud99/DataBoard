@@ -63,6 +63,15 @@ public interface DataBoard<E extends Data<?>> {
     
     // Inserisce un dato in bacheca
     // se vengono rispettati i controlli di identità
+    /**
+     * 
+     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
+     * @param dato t.c. dato != null
+     * @param passw t.c. password = this.passw
+     * @modifies this.el_i.data
+     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
+     */
     public boolean put(String passw, E dato, String categoria);
     
     // Ottiene una copia del del dato in bacheca
