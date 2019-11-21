@@ -10,8 +10,8 @@ public interface DataBoard<E extends Data<?>> {
      * TE:          <password, elems = { el_0, ..., el_i, ..., el_numCategories() }> con
      *                  el_i = <categoryName, dataSet, friends> con
      *                      categoryName != null    
-     *                      dataSet = data_0, ..., data_j, ...., data_numData(el_i.categoryName) lista ordinata
-     *                      friends = { friend_0, ..., friend_k, ..., firend_numFriends(el_i.categoryName()) }
+     *                      dataSet = data_0, ..., data_j, ...., data_numData(el_i.categoryName) lista ordinata con data_j != null
+     *                      friends = { friend_0, ..., friend_k, ..., firend_numFriends(el_i.categoryName()) } con friend_k != null
      *              password != null
      */
 
