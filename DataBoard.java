@@ -107,7 +107,7 @@ public interface DataBoard<E extends Data<?>> {
     // bacheca condivisi.
     public Iterator<E> getFriendIterator(String friend);
 
-    public int numFriends();
-    public int numCategories(String Category);
+    public int numCategories();
+    public int numFriends(String Category);
     public int numData(String Category);
 }
