@@ -33,7 +33,7 @@ public interface DataBoard<E extends Data<?>> {
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
      * @modifies this.elems
-     * @throws InvalidArgumentExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @effects post(this.elems) = pre(this.elems) \ el_i
      */
     public void removeCategory(String Category, String passw);
@@ -44,7 +44,7 @@ public interface DataBoard<E extends Data<?>> {
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.friends
-     * @throws InvalidArgumentExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) U friend
      */
     public void addFriend(String Category, String passw, String friend);
@@ -56,7 +56,7 @@ public interface DataBoard<E extends Data<?>> {
      * @param friend t.c. friend != null and (exist j = 1, ...., numFriendns(Category) | el_i.friend[j] = friend)
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.friends
-     * @throws InvalidArgumentExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
     public void removeFriend(String Category, String passw, String friend);
