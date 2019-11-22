@@ -17,11 +17,23 @@ public interface Data<E> {
     public void updateData(E el);
 
     // Prende il valore di element
+    /**
+     * 
+     * @return element
+     */
     public E getData();
 
-    // Restituisce il numero di like associati al datoA
+    // Restituisce il numero di like associati al dato
+    /**
+     * 
+     * @return likes
+     */
     public int getLikes();
 
     // Stampa il valore di element
+    /**
+     * 
+     * @effects stampa in formato stringa element
+     */
     public void Display();
 }
