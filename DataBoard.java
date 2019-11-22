@@ -8,10 +8,10 @@ public interface DataBoard<E extends Data<T>, T> {
      *              dato presente nella bacheca ha associato la categoria del dato.
      * 
      * TE:          <password, elems = { el_0, ..., el_i, ..., el_numCategories() }> con
-     *                  el_i = <categoryName, dataSet, friends> con
+     *                  forall i = 1, ..., numCategories | el_i = <categoryName, dataSet, friends> con
      *                      categoryName != null    
      *                      dataSet = getDataCategory(password, categoryName)
-     *                      friends = { friend_0, ..., friend_k, ..., firend_numFriends(el_i.categoryName()) } con friend_k != null
+     *                      friends = { friend_0, ..., friend_k, ..., firend_numFriends(el_i.categoryName()) } con friend_k != null forall k = 0, ..., numFriends(el_i.categoryName())
      *              password != null
      */
 
@@ -128,10 +128,10 @@ public interface DataBoard<E extends Data<T>, T> {
      * @param passw t.c. password = this.passw
      * @modifies this.elems
      * @throws InvalidPasswordException if passw != this.password
-     * @return iteratore di data_1, ...., data_n, lista ordinata con
+     * @return iteratore di data[iter_1], ...., data[iter_n], lista ordinata con
      *          n = numData(el_1.categoryName) + ... + numData(el_numCategories().categoryName) &&
-     *          (forall i = 1, ...., n | data_i in this.el_1.dataSet U .... U this.el_numCategories().dataSet) &&
-     *          (forall i,j = 1, ...., n | i < j => data_i.likes < data_j.likes)
+     *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) ) &&
+     *          (forall i,j = 1, ...., n | i < j => data[iter_i].likes < data[iter_j].likes)
      */
     public Iterator<E> getIterator(String passw);
 
@@ -140,7 +140,7 @@ public interface DataBoard<E extends Data<T>, T> {
      * 
      * @param friend t.c. exist i = 1, ..., numCategories | ( exist j = 1, ..., numFriends(el_i.categoryName) | friend = el_i.friend[j]) 
      * @param dato t.c. dato != null && (exist k = 1, ...., numData(el_i.categoryName) | el_i.data[k] = dato)
-     * @throws InvalidFriendException if forall h = 1, ...., numFriendns(Category) | el_i.friend[h] != friend
+     * @throws InvalidFriendException if forall h = 1, ...., numCategories() | ( forall l = 1, ...., numFriends(el_h.categoryName) | el_h.friend[l] != friend)
      * @throws InvalidDataException if forall l = 1, ..., numData(el_i.categoryName) | el_k.data[l] != dato
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
@@ -150,9 +150,36 @@ public interface DataBoard<E extends Data<T>, T> {
     // Legge un dato condiviso
     // restituisce un iteratore (senza remove) che genera tutti i dati in
     // bacheca condivisi.
+    /**
+     * 
+     * @param friend t.c. exist i = 1, ..., numCategories | ( exist j = 1, ..., numFriends(el_i.categoryName) | friend = el_i.friend[j]) 
+     * @throws InvalidFriendException if forall h = 1, ...., numCategories() | ( forall l = 1, ...., numFriends(el_h.categoryName) | el_h.friend[l] != friend)
+     * @return iteratore di data[iter_1], ...., data[iter_n], lista ordinata con
+     *          n = numData(el_cat_1.categoryName) + ... + numData(el_cat_m) &&
+     *          m = #{ i | 0 < i < numCategories() && exist j = 1, ..., numFriends(el_i.categoryName t.c. el_i.friend[j] = friend) }
+     *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) )
+     */
     public Iterator<E> getFriendIterator(String friend);
 
+    /**
+     * 
+     * @return #elems
+     */
     public int numCategories();
-    public int numFriends(String Category);
+
+    /**
+     * 
+     * @param category t.c. category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = category)
+     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != category)
+     * @return #el_i.friends
+     */
+    public int numFriends(String category);
+
+    /**
+     * 
+     * @param category t.c. category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = category)
+     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != category)
+     * @return #el_i.dataSet
+     */
     public int numData(String Category);
 }
