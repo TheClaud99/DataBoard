@@ -1,7 +1,7 @@
 import java.util.Iterator;
 import java.util.List;
 
-public interface DataBoard<E extends Data<T>, T> {
+public interface DataBoard<E extends Data> {
     /**
      * 
      * Overview:    contenitore di oggetti generici che estendono il tipo di dato Data. Ogni
