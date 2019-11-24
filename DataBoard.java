@@ -104,6 +104,7 @@ public interface DataBoard<E extends Data<T>, T> {
      * @modifies this.el_i.data
      * @throws InvalidPasswordException if passw != this.password
      * @throws InvalidDataException if forall k = 1, ...., numCategories | ( forall h = 1, ..., numData(el_k.categoryName) | el_k.data[h] != dato )
+     * @throws NullPointerException if Category = null
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato
      * @return this.el_i.data[j]
      */
