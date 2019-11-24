@@ -145,7 +145,7 @@ public interface DataBoard<E extends Data<T>, T> {
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
-    void insertLike(String friend, E dato);
+    public void insertLike(String friend, E dato);
 
     // Legge un dato condiviso
     // restituisce un iteratore (senza remove) che genera tutti i dati in
