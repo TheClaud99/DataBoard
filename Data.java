@@ -36,4 +36,10 @@ public interface Data<E> {
      * @effects stampa in formato stringa element
      */
     public void Display();
+
+    /**
+     * 
+     * @return true se obj.getData() = this.getData(), false altrimenti
+     */
+    public boolean equals(Data obj);
 }
