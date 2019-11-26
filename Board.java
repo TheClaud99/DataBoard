@@ -117,9 +117,7 @@ public class Board<E extends Data> implements DataBoard<E> {
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
         if(passw != this.password) throw new InvalidPasswordException();
         if(friend == null || Category == null) throw new NullPointerException();
-    
         if(!this.elements.get(Category).removeFriend(friend)) throw new InvalidFriendException();
-
     }
     
     // Inserisce un dato in bacheca
