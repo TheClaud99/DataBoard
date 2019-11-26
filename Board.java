@@ -202,7 +202,15 @@ public class Board<E extends Data> implements DataBoard<E> {
      *          (forall i,j = 1, ...., n | i < j => data[iter_i].likes < data[iter_j].likes)
      */
     public Iterator<E> getIterator(String passw) {
-        return null;
+
+        List<E> bacheca = new ArrayList<E>();
+
+        for(Category<E> category : this.elements.values())
+            bacheca.addAll(category.getData());
+        
+        bacheca.sort(new SortByLikes());
+        
+        return Collections.unmodifiableList(bacheca).iterator();
     }
 
     // Aggiunge un like a un dato
@@ -261,4 +269,11 @@ public class Board<E extends Data> implements DataBoard<E> {
         return this.elements.get(category).numData();
     }
 
+}
+
+class SortByLikes implements Comparator<Data> {
+    public int compare(Data a, Data b) 
+    { 
+        return b.getLikes() - a.getLikes(); 
+    } 
 }
