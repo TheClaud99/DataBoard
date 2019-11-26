@@ -1,4 +1,7 @@
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class Board<E extends Data> implements DataBoard<E> {
 
@@ -23,7 +26,7 @@ public class Board<E extends Data> implements DataBoard<E> {
      *                      
      */
 
-    private HashMap<String, Category> elements;
+    private HashMap<String, Category<E>> elements;
     private int dim;
     private String password;
 
@@ -32,7 +35,7 @@ public class Board<E extends Data> implements DataBoard<E> {
     {
         this.password = password;
         this.dim = 0;
-        this.elements = new HashMap<String, Category>();
+        this.elements = new HashMap<String, Category<E>>();
     }
 
      /**
@@ -51,7 +54,8 @@ public class Board<E extends Data> implements DataBoard<E> {
         if(passw != this.password) throw new InvalidPasswordException();
         if(this.elements.get(Category) != null) throw new ExistingCategoryException();
 
-        elements.put(Category, new Category(Category));
+        elements.put(Category, new Category<E>(Category));
+        if(this.elements.containsKey(Category)) dim++;
     }
     
     // Rimuove l’identità una categoria di dati
@@ -139,9 +143,9 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @return this.el_i.data[j]
      */
     public E get(String passw, E dato) {
-        Collection<Category> categories = this.elements.values();
+        Collection<Category<E>> categories = this.elements.values();
 
-        for(Category category: categories) {
+        for(Category<E> category: categories) {
             for(E dataEl : category.getData()) {
                 if(dato.equals(dataEl)) return dato;
             }
@@ -163,7 +167,7 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @return this.el_i.data[j]
      */
     public E remove(String passw, E dato) {
-        for(Category category : this.elements.values()) {
+        for(Category<E> category : this.elements.values()) {
             category.removeDataIfExists(dato);
             return dato;
         }
@@ -181,7 +185,9 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @return { data[1], ..., data[numData(el_i.categoryName)] }
      */
-    public List<E> getDataCategory(String passw, String Category) {}
+    public List<E> getDataCategory(String passw, String Category) {
+        return null;
+    }
     
     // restituisce un iteratore (senza remove) che genera tutti i dati in
     // bacheca ordinati rispetto al numero di like.
@@ -195,7 +201,9 @@ public class Board<E extends Data> implements DataBoard<E> {
      *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) ) &&
      *          (forall i,j = 1, ...., n | i < j => data[iter_i].likes < data[iter_j].likes)
      */
-    public Iterator<E> getIterator(String passw) {}
+    public Iterator<E> getIterator(String passw) {
+        return null;
+    }
 
     // Aggiunge un like a un dato
     /**
@@ -221,7 +229,9 @@ public class Board<E extends Data> implements DataBoard<E> {
      *          m = #{ i | 0 < i < numCategories() && exist j = 1, ..., numFriends(el_i.categoryName t.c. el_i.friend[j] = friend) }
      *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) )
      */
-    public Iterator<E> getFriendIterator(String friend) {}
+    public Iterator<E> getFriendIterator(String friend) {
+        return null;
+    }
 
     /**
      * 
@@ -247,7 +257,7 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != category)
      * @return #el_i.dataSet
      */
-    public int numData(String Category) {
+    public int numData(String category) {
         return this.elements.get(category).numData();
     }
 
