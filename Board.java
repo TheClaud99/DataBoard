@@ -257,13 +257,23 @@ public class Board<E extends Data> implements DataBoard<E> {
      * 
      * @param friend t.c. exist i = 1, ..., numCategories | ( exist j = 1, ..., numFriends(el_i.categoryName) | friend = el_i.friend[j]) 
      * @throws InvalidFriendException if forall h = 1, ...., numCategories() | ( forall l = 1, ...., numFriends(el_h.categoryName) | el_h.friend[l] != friend)
+     * @throws NullPointerException if friend = null
      * @return iteratore di data[iter_1], ...., data[iter_n], lista ordinata con
      *          n = numData(el_cat_1.categoryName) + ... + numData(el_cat_m) &&
      *          m = #{ i | 0 < i < numCategories() && exist j = 1, ..., numFriends(el_i.categoryName t.c. el_i.friend[j] = friend) }
      *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) )
      */
     public Iterator<E> getFriendIterator(String friend) {
-        return null;
+        if(friend == null) throw new NullPointerException();
+        
+        List<E> bacheca = new ArrayList<E>();
+
+        for(Category<E> category : this.elements.values())
+            if(category.getFriends().contains(friend)) bacheca.addAll(category.getData());
+
+        if(bacheca.isEmpty()) throw new InvalidFriendException();
+
+        return Collections.unmodifiableList(bacheca).iterator();
     }
 
     /**
