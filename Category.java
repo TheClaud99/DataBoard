@@ -1,4 +1,6 @@
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Category<E extends Data> {
 
@@ -9,8 +11,8 @@ public class Category<E extends Data> {
     public Category(String categoryName)
     {
         this.categoryName = categoryName;
-        this.dataSet = (List<E>) new Object();
-        this.friends = (List<String>) new Object();
+        this.dataSet = new ArrayList<E>();
+        this.friends = new ArrayList<String>();
     }
 
     public String getCategoryName()
@@ -20,7 +22,15 @@ public class Category<E extends Data> {
 
     public List<E> getData()
     {
-        return dataSet;
+        return Collections.unmodifiableList(dataSet);
+    }
+
+    public E getData(E data)
+    {
+        for(E dataEl : dataSet)
+            if(dataEl.equals(data)) return dataEl;
+
+        throw new InvalidDataException();
     }
 
     public List<String> getFriends()
@@ -34,8 +44,16 @@ public class Category<E extends Data> {
     }
 
     public void addData(E data) throws DuplicateDataException {
-        if(this.dataSet.contains(data)) throw new DuplicateDataException();
+        if(this.contains(data)) throw new DuplicateDataException();
+
         this.dataSet.add(data);
+    }
+
+    public boolean contains(E data) {
+        for(E dataEl : dataSet)
+            if(dataEl.equals(data)) return true;
+        
+        return false;
     }
 
     public int numData() {
@@ -46,7 +64,7 @@ public class Category<E extends Data> {
         return this.friends.size();
     }
 
-    public void removeDataIfExists(E data) {
-        this.dataSet.remove(data);
+    public boolean removeDataIfExists(E data) {
+        return this.dataSet.remove(data);
     }
 }
