@@ -1,4 +1,6 @@
-public class Category<E> {
+import java.util.List;
+
+public class Category<E extends Data> {
 
     private String categoryName;
     private List<E> dataSet;
@@ -7,8 +9,8 @@ public class Category<E> {
     public Category(String categoryName)
     {
         this.categoryName = categoryName;
-        this.dataSet = new List<E>();
-        this.friends = new List<String>();
+        this.dataSet = (List<E>) new Object();
+        this.friends = (List<String>) new Object();
     }
 
     public String getCategoryName()
@@ -21,7 +23,7 @@ public class Category<E> {
         return dataSet;
     }
 
-    public List<E> getFriends()
+    public List<String> getFriends()
     {
         return friends;
     }
