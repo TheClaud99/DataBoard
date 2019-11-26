@@ -110,9 +110,17 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @throws InvalidPasswordException if passw != this.password
      * @throws InvalidFriendException if (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
+     * @throws NullPointerException if friend = null or Category = null
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
-    public void removeFriend(String Category, String passw, String friend) {}
+    public void removeFriend(String Category, String passw, String friend) {
+        if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
+        if(passw != this.password) throw new InvalidPasswordException();
+        if(friend == null || Category == null) throw new NullPointerException();
+    
+        if(!this.elements.get(Category).removeFriend(friend)) throw new InvalidFriendException();
+
+    }
     
     // Inserisce un dato in bacheca
     // se vengono rispettati i controlli di identità
