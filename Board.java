@@ -163,14 +163,17 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @modifies this.el_i.data
      * @throws InvalidPasswordException if passw != this.password
      * @throws InvalidDataException if forall k = 1, ...., numCategories | ( forall h = 1, ..., numData(el_k.categoryName) | el_k.data[h] != dato )
-     * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato
+     * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato forall i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
      * @return this.el_i.data[j]
      */
     public E remove(String passw, E dato) {
+        boolean found = false;
+
         for(Category<E> category : this.elements.values()) {
             category.removeDataIfExists(dato);
-            return dato;
         }
+
+        if(found) return dato;
 
         throw new InvalidDataException();
     }
