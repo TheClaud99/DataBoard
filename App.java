@@ -9,16 +9,21 @@ public class App {
         Data post2 = new myData<String>("Buonasera");
         board.createCategory(category1, "garde");
         board.createCategory(category2, "garde");
+        board.addFriend(category1, "garde", "iliu");
         post2.insertLike();
         post1.insertLike();
         post1.insertLike();
         board.put("garde", post1, category1);
         board.put("garde", post2, category2);
-        Iterator<Data> iter = board.getIterator("garde");
+        Iterator<Data> iter = board.getFriendIterator("iliu");
 
         while(iter.hasNext())
         {
             iter.next().Display();
         }
+
+        board.removeFriend(category1, "garde", "iliu");
+
+        iter = board.getFriendIterator("iliu"); // should thorw InvalidFriendException
     }
 }
