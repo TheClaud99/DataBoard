@@ -176,17 +176,22 @@ public class Board<E extends Data> implements DataBoard<E> {
     }
 
     // Crea la lista dei dati in bacheca su una determinata categoria
-    // se vengono rispettati i controlli di identitàù
+    // se vengono rispettati i controlli di identità
     /**
      * 
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
      * @throws InvalidPasswordException if passw != this.password
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws NullPointerException if Category = null
      * @return { data[1], ..., data[numData(el_i.categoryName)] }
      */
     public List<E> getDataCategory(String passw, String Category) {
-        return null;
+        if(passw != this.password) throw new InvalidPasswordException();
+        if(Category == null) throw new NullPointerException();
+        if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
+        
+        return this.elements.get(Category).getData();
     }
     
     // restituisce un iteratore (senza remove) che genera tutti i dati in
