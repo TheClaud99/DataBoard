@@ -85,11 +85,13 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @param friend t.c. friend != null and (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
      * @modifies this.el_i.friends
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws NullPointerException if Category = null
      * @throws ExistingFriendException if (exist j = 1, ...., numFriendns(Category) | el_i.friend[j] = friend)
      * @throws InvalidPasswordException if passw != this.password
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) U friend
      */
     public void addFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, ExistingFriendException, InvalidPasswordException {
+        if(Category == null) throw new NullPointerException();
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
         if(this.elements.get(Category).getFriends().contains(friend)) throw new ExistingFriendException();
         if(passw != this.password) throw new InvalidPasswordException();
