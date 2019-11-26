@@ -41,5 +41,8 @@ public interface Data<E> {
      * 
      * @return true se obj.getData() = this.getData(), false altrimenti
      */
+    @Override
     public boolean equals(Data obj);
+
+    public void insertLike() throws IllegalArgumentException;
 }
