@@ -129,7 +129,16 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
     public boolean put(String passw, E dato, String categoria) {
-        return true;
+        if(this.elements.get(categoria) == null) throw new InvalidCategoryExcetpion();
+        if(passw != this.password) throw new InvalidPasswordException();
+        
+        try {
+            this.elements.get(categoria).addData(dato);
+        } catch (Exception e) {
+            System.out.println("Dato già presente all'interno della categoria");
+        }
+
+        return this.elements.get(categoria).getData(dato) != null;
     }
     
     // Ottiene una copia del del dato in bacheca
