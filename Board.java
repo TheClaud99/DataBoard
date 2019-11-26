@@ -143,12 +143,13 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @return this.el_i.data[j]
      */
     public E get(String passw, E dato) {
+        if(passw != this.password) throw new InvalidPasswordException();
+        
         Collection<Category<E>> categories = this.elements.values();
 
         for(Category<E> category: categories) {
-            for(E dataEl : category.getData()) {
-                if(dato.equals(dataEl)) return dato;
-            }
+            if(category.getData(dato) != null)
+                return category.getData(dato);
         }
 
         throw new InvalidDataException();
