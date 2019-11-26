@@ -67,4 +67,8 @@ public class Category<E extends Data> {
     public boolean removeDataIfExists(E data) {
         return this.dataSet.remove(data);
     }
+
+    public boolean removeFriend(String friend) {
+        return this.friends.remove(friend);
+    }
 }
