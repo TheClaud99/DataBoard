@@ -2,9 +2,9 @@ class myData<E> implements Data<E>{
     private E el;
     private int likes;
     /**
-     * RI:  Elem!=NULL AND Likes>=0
+     * RI:  el != null && likes >= 0
      * 
-     * AF: <E Elem, int Likes>
+     * AF: <el, likes>
      */
 
 
@@ -24,13 +24,9 @@ class myData<E> implements Data<E>{
      */
     public void updateData(E el)throws NullPointerException
     {
-        if(el==null)
-        {
-            throw new NullPointerException();
-        }
-        else
-            this.el=el;
-
+        if(el==null) throw new NullPointerException();
+        
+        this.el=el;
     }
 
     // Prende il valore di element
@@ -59,7 +55,7 @@ class myData<E> implements Data<E>{
     //restituisce il numero di likes
     /**
      * 
-     * @return likes
+     * @return this.likes
      */
     public int getLikes()
     {
@@ -69,15 +65,15 @@ class myData<E> implements Data<E>{
     //imposta i like ad un valore dato in input
     /**
      * 
-     * @param n t.c. n>0 AND n>likes
-     * @throws IllegalArgumentException if n<likes
-     * 
+     * @effects post(this.likes) = pre(this.likes) + 1
      */
-    public void setLikes(int n) throws IllegalArgumentException
+    public void insertLike() throws IllegalArgumentException
     {
-        if(n<this.likes)
-            throw new IllegalArgumentException("Numero dei like minore del precedente");
-        this.likes=n;
+        this.likes++;
     }
 
+    @Override
+    public boolean equals(Data obj) {
+        return this.el.equals(obj.getData());
+    }
 }
