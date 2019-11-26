@@ -184,3 +184,46 @@ public interface DataBoard<E extends Data> {
      */
     public int numData(String Category);
 }
+
+
+class InvalidCategoryExcetpion extends RuntimeException {
+    public InvalidCategoryExcetpion() {
+        super();
+    }
+}
+
+class InvalidFriendException extends RuntimeException {
+    public InvalidFriendException() {
+        super();
+    }
+}
+
+class InvalidDataException extends RuntimeException {
+    public InvalidDataException() {
+        super();
+    }
+}
+
+class ExistingFriendException extends RuntimeException {
+    public ExistingFriendException() {
+        super();
+    }
+}
+
+class DuplicateDataException extends RuntimeException {
+    public DuplicateDataException() {
+        super();
+    }
+}
+
+class InvalidPasswordException extends RuntimeException {
+    public InvalidPasswordException() {
+        super();
+    }
+}
+
+class ExistingCategoryException extends RuntimeException {
+    public ExistingCategoryException() {
+        super();
+    }
+}
