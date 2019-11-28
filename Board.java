@@ -139,7 +139,7 @@ public class Board<E extends Data> implements DataBoard<E> {
         
         try {
             this.elements.get(categoria).addData(dato);
-        } catch (Exception e) {
+        } catch (DuplicateDataException e) {
             System.out.println("Dato già presente all'interno della categoria");
         }
 
@@ -246,7 +246,19 @@ public class Board<E extends Data> implements DataBoard<E> {
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
-    public void insertLike(String friend, E dato) {}
+    public void insertLike(String friend, E dato) {
+        boolean found = false;
+
+        for(Category<E> category : this.elements.values()) {
+            Data<?> dataEl = category.getData(dato);
+            if(dataEl != null) {
+                dataEl.insertLike();
+                found = true;
+            }
+        }
+
+        if(!found) throw new InvalidDataException();
+    }
 
     // Legge un dato condiviso
     // restituisce un iteratore (senza remove) che genera tutti i dati in
@@ -261,7 +273,7 @@ public class Board<E extends Data> implements DataBoard<E> {
      *          m = #{ i | 0 < i < numCategories() && exist j = 1, ..., numFriends(el_i.categoryName t.c. el_i.friend[j] = friend) }
      *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) )
      */
-    public Iterator<E> getFriendIterator(String friend) {
+    public Iterator<E> getFriendIterator(String friend) throws InvalidFriendException {
         if(friend == null) throw new NullPointerException();
         
         List<E> bacheca = new ArrayList<E>();
