@@ -160,7 +160,7 @@ public interface DataBoard<E extends Data> {
      *          m = #{ i | 0 < i < numCategories() && exist j = 1, ..., numFriends(el_i.categoryName t.c. el_i.friend[j] = friend) }
      *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) )
      */
-    public Iterator<E> getFriendIterator(String friend);
+    public Iterator<E> getFriendIterator(String friend) throws InvalidFriendException;
 
     /**
      * 
