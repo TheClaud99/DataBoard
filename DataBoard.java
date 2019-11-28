@@ -66,7 +66,7 @@ public interface DataBoard<E extends Data> {
      * @throws InvalidFriendException if (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
-    public void removeFriend(String Category, String passw, String friend);
+    public void removeFriend(String Category, String passw, String friend) throws InvalidFriendException, InvalidDataException;
     
     // Inserisce un dato in bacheca
     // se vengono rispettati i controlli di identità
