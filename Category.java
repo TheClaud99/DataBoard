@@ -44,16 +44,9 @@ public class Category<E extends Data> {
     }
 
     public void addData(E data) throws DuplicateDataException {
-        if(this.contains(data)) throw new DuplicateDataException();
+        if(dataSet.contains(data)) throw new DuplicateDataException();
 
         this.dataSet.add(data);
-    }
-
-    public boolean contains(E data) {
-        for(E dataEl : dataSet)
-            if(dataEl.equals(data)) return true;
-        
-        return false;
     }
 
     public int numData() {
