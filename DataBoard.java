@@ -227,3 +227,10 @@ class ExistingCategoryException extends RuntimeException {
         super();
     }
 }
+
+class DuplicateLikeException extends RuntimeException {
+    public DuplicateLikeException()
+    {
+        super();
+    }
+}
