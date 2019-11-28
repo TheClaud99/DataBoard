@@ -72,8 +72,7 @@ class myData<E> implements Data<E>{
         this.likes++;
     }
 
-    @Override
-    public boolean equals(Data obj) {
-        return this.el.equals(obj.getData());
+    public Data<E> cloneData() {
+        return new myData<E>(this.getData());
     }
 }

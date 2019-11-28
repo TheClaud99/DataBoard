@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Board<E extends Data> implements DataBoard<E> {
+public class Board<E extends Data<?>> implements DataBoard<E> {
 
     /**
      * 
@@ -162,8 +162,9 @@ public class Board<E extends Data> implements DataBoard<E> {
         Collection<Category<E>> categories = this.elements.values();
 
         for(Category<E> category: categories) {
-            if(category.getData(dato) != null)
-                return category.getData(dato);
+            E dataEl = category.getData(dato);
+            if(dataEl != null)
+                return (E) dataEl.cloneData();
         }
 
         throw new InvalidDataException();

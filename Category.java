@@ -2,7 +2,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Category<E extends Data> {
+public class Category<E extends Data<?>> {
 
     private String categoryName;
     private List<E> dataSet;
@@ -30,7 +30,7 @@ public class Category<E extends Data> {
         for(E dataEl : dataSet)
             if(dataEl.equals(data)) return dataEl;
 
-        throw new InvalidDataException();
+        return null;
     }
 
     public List<String> getFriends()

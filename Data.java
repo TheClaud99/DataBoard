@@ -43,4 +43,6 @@ public interface Data<E> {
      */
     
     public void insertLike() throws IllegalArgumentException, DuplicateLikeException;
+
+    public Data<E> cloneData();
 }
