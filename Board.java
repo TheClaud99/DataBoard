@@ -17,7 +17,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * IR:          password != null && 
      *              ( forall i = 1, ..., categories.size()  |
      *                      categories.get(i).categoryName != null 
-     *                      && ( forall j = 0, ..., categories.size() | categories.get(i).getCategoryName() != categories.get(i).categoryName() ) )
+     *                      && ( forall j = 0, ..., categories.size() | categories.get(i).getCategoryName() != categories.get(j).categoryName() ) )
      *                      && ( forall k, l = 0, ..., categories.size() | k != l => categories.get(i).getFriend(k) != categories.get(i).getFriend(l) )
      *                      && ( forall m, n = 0, ..., categories.size() | m != n => categories.get(i).getData(m) != categories.get(i).getData(n) ) )
      *                      
@@ -90,12 +90,11 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
     public void addFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, ExistingFriendException, InvalidPasswordException {
         if(Category == null) throw new NullPointerException();
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
-        if(this.elements.get(Category).getFriends().contains(friend)) throw new ExistingFriendException();
         if(passw != this.password) throw new InvalidPasswordException();
 
         try {
             this.elements.get(Category).addFriend(friend);
-        } catch(Exception e) {
+        } catch(ExistingFriendException e) {
             System.out.println("Amico gia' presnte");
         }
     }
@@ -141,9 +140,10 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
             this.elements.get(categoria).addData(dato);
         } catch (DuplicateDataException e) {
             System.out.println("Dato già presente all'interno della categoria");
+            return false;
         }
 
-        return this.elements.get(categoria).getData(dato) != null;
+        return this.elements.get(categoria).contains(dato);
     }
     
     // Ottiene una copia del del dato in bacheca
@@ -162,9 +162,8 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
         Collection<Category<E>> categories = this.elements.values();
 
         for(Category<E> category: categories) {
-            E dataEl = category.getData(dato);
-            if(dataEl != null)
-                return (E) dataEl.cloneData();
+            if(category.contains(dato))
+                return (E) dato.cloneData();
         }
 
         throw new InvalidDataException();
@@ -186,7 +185,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
         boolean found = false;
 
         for(Category<E> category : this.elements.values()) {
-            category.removeDataIfExists(dato);
+            if(category.removeDataIfExists(dato)) found = true;
         }
 
         if(found) return dato;
@@ -248,17 +247,26 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
     public void insertLike(String friend, E dato) {
-        boolean found = false;
+
+        if(friend == null || dato == null) throw new NullPointerException();
+
+        boolean foundFriend = false, foundPost = false;
 
         for(Category<E> category : this.elements.values()) {
-            Data<?> dataEl = category.getData(dato);
-            if(dataEl != null) {
-                dataEl.insertLike();
-                found = true;
+            foundFriend = !foundFriend ? category.contains(friend) : true;
+            foundPost = !foundPost ? category.contains(dato) : true;
+            if(category.contains(dato) && category.contains(friend)) {
+                try {
+                    dato.insertLike(friend);
+                } catch(DuplicateLikeException e) {
+                    System.out.println(friend + " ha gia' messo like al post");
+                }
+                return;
             }
         }
 
-        if(!found) throw new InvalidDataException();
+        if(!foundFriend) throw new InvalidFriendException();
+        if(!foundPost) throw new InvalidDataException();
     }
 
     // Legge un dato condiviso
@@ -317,8 +325,8 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
 
 }
 
-class SortByLikes implements Comparator<Data> {
-    public int compare(Data a, Data b) 
+class SortByLikes implements Comparator<Data<?>> {
+    public int compare(Data<?> a, Data<?> b) 
     { 
         return b.getLikes() - a.getLikes(); 
     } 
