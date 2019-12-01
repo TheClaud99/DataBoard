@@ -1,7 +1,7 @@
 import java.util.Iterator;
 import java.util.List;
 
-public interface DataBoard<E extends Data> {
+public interface DataBoard<E extends Data<?>> {
     /**
      * 
      * Overview:    contenitore di oggetti generici che estendono il tipo di dato Data. Ogni
@@ -81,7 +81,7 @@ public interface DataBoard<E extends Data> {
      * @throws DuplicateDataException if exist h = 1, ...., numData(categoria) | data = el_i.data[h]
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
-    public boolean put(String passw, E dato, String categoria);
+    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException;
     
     // Ottiene una copia del del dato in bacheca
     // se vengono rispettati i controlli di identità
@@ -210,7 +210,7 @@ class ExistingFriendException extends RuntimeException {
     }
 }
 
-class DuplicateDataException extends RuntimeException {
+class DuplicateDataException extends Exception {
     public DuplicateDataException() {
         super();
     }
@@ -228,7 +228,7 @@ class ExistingCategoryException extends RuntimeException {
     }
 }
 
-class DuplicateLikeException extends RuntimeException {
+class DuplicateLikeException extends Exception {
     public DuplicateLikeException()
     {
         super();
