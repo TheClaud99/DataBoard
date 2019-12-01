@@ -25,13 +25,16 @@ public class Category<E extends Data<?>> {
         return Collections.unmodifiableList(dataSet);
     }
 
-    public E getData(E data)
+    public boolean contains(E data)
     {
-        for(E dataEl : dataSet)
-            if(dataEl.equals(data)) return dataEl;
-
-        return null;
+        return this.dataSet.contains(data);
     }
+
+    public boolean contains(String friend)
+    {
+        return this.friends.contains(friend);
+    }
+
 
     public List<String> getFriends()
     {
