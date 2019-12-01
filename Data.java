@@ -42,7 +42,7 @@ public interface Data<E> {
      * @return true se obj.getData() = this.getData(), false altrimenti
      */
     
-    public void insertLike() throws IllegalArgumentException, DuplicateLikeException;
+    public void insertLike(String friend) throws IllegalArgumentException, DuplicateLikeException;
 
     public Data<E> cloneData();
 }
