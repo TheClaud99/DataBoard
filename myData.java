@@ -1,17 +1,22 @@
-class myData<E> implements Data<E>{
-    private E el;
-    private int likes;
+import java.util.ArrayList;
+import java.util.List; 
+
+class myData <E> implements Data<E>{
     /**
      * RI:  el != null && likes >= 0
      * 
      * AF: <el, likes>
      */
 
+    private E el;
+    private int numLikes;
+    private List<String> friendsLikes;
 
     public myData(E element)
     {
-        this.el=element;
-        this.likes=0;
+        this.el = element;
+        this.numLikes = 0;
+        this.friendsLikes = new ArrayList<String>();
     }
 
     // Cambia il valore di el
@@ -48,7 +53,7 @@ class myData<E> implements Data<E>{
         System.out.println("Post: ");
         System.out.println(this.el);
         System.out.print("Likes del post:");
-        System.out.println(this.likes);
+        System.out.println(this.numLikes);
         
     }
 
@@ -59,7 +64,7 @@ class myData<E> implements Data<E>{
      */
     public int getLikes()
     {
-        return this.likes;
+        return this.numLikes;
     }
 
     //imposta i like ad un valore dato in input
@@ -67,9 +72,12 @@ class myData<E> implements Data<E>{
      * 
      * @effects post(this.likes) = pre(this.likes) + 1
      */
-    public void insertLike() throws IllegalArgumentException
+    public void insertLike(String friend) throws IllegalArgumentException, DuplicateLikeException
     {
-        this.likes++;
+        if(this.friendsLikes.contains(friend)) throw new DuplicateLikeException();
+
+        this.numLikes++;
+        this.friendsLikes.add(friend);
     }
 
     public Data<E> cloneData() {
