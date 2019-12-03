@@ -66,7 +66,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @throws NullPointerException if Category = null
      * @effects post(this.elems) = pre(this.elems) \ el_i
      */
-    public void removeCategory(String Category, String passw) throws InvalidCategoryExcetpion, InvalidPasswordException {
+    public void removeCategory(String Category, String passw) throws InvalidCategoryExcetpion, InvalidPasswordException, NullPointerException {
         if(Category == null) throw new NullPointerException();
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
         if(passw != this.password) throw new InvalidPasswordException();
@@ -87,7 +87,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @throws InvalidPasswordException if passw != this.password
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) U friend
      */
-    public void addFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, ExistingFriendException, InvalidPasswordException {
+    public void addFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, ExistingFriendException, InvalidPasswordException, NullPointerException {
         if(Category == null) throw new NullPointerException();
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
         if(passw != this.password) throw new InvalidPasswordException();
@@ -112,7 +112,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @throws NullPointerException if friend = null or Category = null
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
-    public void removeFriend(String Category, String passw, String friend) {
+    public void removeFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, InvalidPasswordException, InvalidFriendException, NullPointerException  {
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
         if(passw != this.password) throw new InvalidPasswordException();
         if(friend == null || Category == null) throw new NullPointerException();
@@ -132,16 +132,11 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @throws DuplicateDataException if exist h = 1, ...., numData(categoria) | data = el_i.data[h]
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
-    public boolean put(String passw, E dato, String categoria) {
+    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, DuplicateDataException, InvalidPasswordException {
         if(this.elements.get(categoria) == null) throw new InvalidCategoryExcetpion();
         if(passw != this.password) throw new InvalidPasswordException();
         
-        try {
-            this.elements.get(categoria).addData(dato);
-        } catch (DuplicateDataException e) {
-            System.out.println("Dato già presente all'interno della categoria");
-            return false;
-        }
+        this.elements.get(categoria).addData(dato);
 
         return this.elements.get(categoria).contains(dato);
     }
@@ -156,7 +151,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @throws InvalidPasswordException if passw != this.password
      * @return this.el_i.data[j]
      */
-    public E get(String passw, E dato) {
+    public E get(String passw, E dato) throws InvalidDataException, InvalidPasswordException {
         if(passw != this.password) throw new InvalidPasswordException();
         
         Collection<Category<E>> categories = this.elements.values();
@@ -181,7 +176,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato forall i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
      * @return this.el_i.data[j]
      */
-    public E remove(String passw, E dato) {
+    public E remove(String passw, E dato) throws InvalidDataException {
         boolean found = false;
 
         for(Category<E> category : this.elements.values()) {
@@ -204,7 +199,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @throws NullPointerException if Category = null
      * @return { data[1], ..., data[numData(el_i.categoryName)] }
      */
-    public List<E> getDataCategory(String passw, String Category) {
+    public List<E> getDataCategory(String passw, String Category) throws InvalidCategoryExcetpion, InvalidPasswordException {
         if(passw != this.password) throw new InvalidPasswordException();
         if(Category == null) throw new NullPointerException();
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
@@ -224,7 +219,8 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) ) &&
      *          (forall i,j = 1, ...., n | i < j => data[iter_i].likes < data[iter_j].likes)
      */
-    public Iterator<E> getIterator(String passw) {
+    public Iterator<E> getIterator(String passw) throws InvalidPasswordException {
+        if(passw != this.password) throw new InvalidPasswordException();
 
         List<E> bacheca = new ArrayList<E>();
 
@@ -246,7 +242,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
-    public void insertLike(String friend, E dato) {
+    public void insertLike(String friend, E dato) throws InvalidFriendException, InvalidDataException {
 
         if(friend == null || dato == null) throw new NullPointerException();
 
@@ -323,11 +319,4 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
         return this.elements.get(category).numData();
     }
 
-}
-
-class SortByLikes implements Comparator<Data<?>> {
-    public int compare(Data<?> a, Data<?> b) 
-    { 
-        return b.getLikes() - a.getLikes(); 
-    } 
 }
