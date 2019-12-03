@@ -26,19 +26,20 @@ public interface DataBoard<E extends Data<?>> {
      * @throws ExistingCategoryException if (exist i = 1, ..., numCategories() | el_i.categoryName = Category)
      * @effects post(this.elems) = pre(this.el_i) U <Category, null, null>
      */
-    public void createCategory(String Category, String passw) throws NullPointerException;
+    public void createCategory(String Category, String passw) throws NullPointerException, InvalidPasswordException, ExistingCategoryException;
     
     // Rimuove l’identità una categoria di dati
     /**
      * 
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
+     * @throws NullPointerException
      * @modifies this.elems
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @throws InvalidPasswordException if passw != this.password
      * @effects post(this.elems) = pre(this.elems) \ el_i
      */
-    public void removeCategory(String Category, String passw);
+    public void removeCategory(String Category, String passw) throws InvalidCategoryExcetpion, InvalidPasswordException, NullPointerException;
 
     // Aggiunge un amico ad una categoria di dati
     /**
@@ -46,13 +47,14 @@ public interface DataBoard<E extends Data<?>> {
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
      * @param friend t.c. friend != null and (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
+     * @throws NullPointerException
      * @modifies this.el_i.friends
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @throws ExistingFriendException if (exist j = 1, ...., numFriendns(Category) | el_i.friend[j] = friend)
      * @throws InvalidPasswordException if passw != this.password
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) U friend
      */
-    public void addFriend(String Category, String passw, String friend);
+    public void addFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, ExistingFriendException, InvalidPasswordException, NullPointerException;
 
     // rimuove un amico ad una categoria di dati
     /**
@@ -64,9 +66,10 @@ public interface DataBoard<E extends Data<?>> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @throws InvalidPasswordException if passw != this.password
      * @throws InvalidFriendException if (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
+     * @throws NullPointerException
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
-    public void removeFriend(String Category, String passw, String friend) throws InvalidFriendException, InvalidDataException;
+    public void removeFriend(String Category, String passw, String friend) throws InvalidFriendException, InvalidCategoryExcetpion, InvalidPasswordException, NullPointerException;
     
     // Inserisce un dato in bacheca
     // se vengono rispettati i controlli di identità
@@ -81,7 +84,7 @@ public interface DataBoard<E extends Data<?>> {
      * @throws DuplicateDataException if exist h = 1, ...., numData(categoria) | data = el_i.data[h]
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
-    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException;
+    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, InvalidPasswordException;
     
     // Ottiene una copia del del dato in bacheca
     // se vengono rispettati i controlli di identità
@@ -93,7 +96,7 @@ public interface DataBoard<E extends Data<?>> {
      * @throws InvalidPasswordException if passw != this.password
      * @return this.el_i.data[j]
      */
-    public E get(String passw, E dato);
+    public E get(String passw, E dato) throws InvalidDataException, InvalidPasswordException;
 
     // Rimuove il dato dalla bacheca
     // se vengono rispettati i controlli di identità
@@ -108,7 +111,7 @@ public interface DataBoard<E extends Data<?>> {
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato
      * @return this.el_i.data[j]
      */
-    public E remove(String passw, E dato);
+    public E remove(String passw, E dato) throws InvalidDataException, InvalidPasswordException;
 
     // Crea la lista dei dati in bacheca su una determinata categoria
     // se vengono rispettati i controlli di identitàù
@@ -120,7 +123,7 @@ public interface DataBoard<E extends Data<?>> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @return { data[1], ..., data[numData(el_i.categoryName)] }
      */
-    public List<E> getDataCategory(String passw, String Category);
+    public List<E> getDataCategory(String passw, String Category) throws InvalidCategoryExcetpion, InvalidPasswordException;
     
     // restituisce un iteratore (senza remove) che genera tutti i dati in
     // bacheca ordinati rispetto al numero di like.
@@ -134,7 +137,7 @@ public interface DataBoard<E extends Data<?>> {
      *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) ) &&
      *          (forall i,j = 1, ...., n | i < j => data[iter_i].likes < data[iter_j].likes)
      */
-    public Iterator<E> getIterator(String passw);
+    public Iterator<E> getIterator(String passw) throws InvalidPasswordException;
 
     // Aggiunge un like a un dato
     /**
@@ -146,7 +149,7 @@ public interface DataBoard<E extends Data<?>> {
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
-    public void insertLike(String friend, E dato);
+    public void insertLike(String friend, E dato) throws InvalidFriendException, InvalidDataException;
 
     // Legge un dato condiviso
     // restituisce un iteratore (senza remove) che genera tutti i dati in
@@ -185,26 +188,45 @@ public interface DataBoard<E extends Data<?>> {
     public int numData(String Category);
 }
 
+/************************ /
+/                         /
+/         Utils           / 
+/                         /
+/*************************/
 
-class InvalidCategoryExcetpion extends RuntimeException {
+class SortByLikes implements Comparator<Data<?>> {
+    public int compare(Data<?> a, Data<?> b) 
+    { 
+        return b.getLikes() - a.getLikes(); 
+    } 
+}
+
+
+/************************ /
+/                         /
+/       Exceptions        / 
+/                         /
+/*************************/
+
+class InvalidCategoryExcetpion extends Exception {
     public InvalidCategoryExcetpion() {
         super();
     }
 }
 
-class InvalidFriendException extends RuntimeException {
+class InvalidFriendException extends Exception {
     public InvalidFriendException() {
         super();
     }
 }
 
-class InvalidDataException extends RuntimeException {
+class InvalidDataException extends Exception {
     public InvalidDataException() {
         super();
     }
 }
 
-class ExistingFriendException extends RuntimeException {
+class ExistingFriendException extends Exception {
     public ExistingFriendException() {
         super();
     }
@@ -216,13 +238,13 @@ class DuplicateDataException extends Exception {
     }
 }
 
-class InvalidPasswordException extends RuntimeException {
+class InvalidPasswordException extends Exception {
     public InvalidPasswordException() {
         super();
     }
 }
 
-class ExistingCategoryException extends RuntimeException {
+class ExistingCategoryException extends Exception {
     public ExistingCategoryException() {
         super();
     }
