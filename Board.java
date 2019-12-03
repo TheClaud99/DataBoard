@@ -42,13 +42,13 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @param passw t.c. password = passw
      * @modifies this.elems
      * @throws NullPointerException if Category = null
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws ExistingCategoryException if (exist i = 1, ..., numCategories() | el_i.categoryName = Category)
      * @effects post(this.elems) = pre(this.el_i) U <Category, null, null>
      */
     public void createCategory(String Category, String passw) throws NullPointerException, InvalidPasswordException, ExistingCategoryException {
         if(Category == null) throw new NullPointerException();
-        if(passw != this.password) throw new InvalidPasswordException();
+        if(!this.password.equals(passw)) throw new InvalidPasswordException();
         if(this.elements.get(Category) != null) throw new ExistingCategoryException();
 
         elements.put(Category, new Category<E>(Category));
@@ -62,14 +62,14 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @param passw t.c. password = this.passw
      * @modifies this.elems
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws NullPointerException if Category = null
      * @effects post(this.elems) = pre(this.elems) \ el_i
      */
     public void removeCategory(String Category, String passw) throws InvalidCategoryExcetpion, InvalidPasswordException, NullPointerException {
         if(Category == null) throw new NullPointerException();
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
-        if(passw != this.password) throw new InvalidPasswordException();
+        if(!this.password.equals(passw)) throw new InvalidPasswordException();
 
         elements.remove(Category);
     }
@@ -84,13 +84,13 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @throws NullPointerException if Category = null
      * @throws ExistingFriendException if (exist j = 1, ...., numFriendns(Category) | el_i.friend[j] = friend)
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) U friend
      */
     public void addFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, ExistingFriendException, InvalidPasswordException, NullPointerException {
         if(Category == null) throw new NullPointerException();
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
-        if(passw != this.password) throw new InvalidPasswordException();
+        if(!this.password.equals(passw)) throw new InvalidPasswordException();
 
         try {
             this.elements.get(Category).addFriend(friend);
@@ -107,14 +107,14 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.friends
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws InvalidFriendException if (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
      * @throws NullPointerException if friend = null or Category = null
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
     public void removeFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, InvalidPasswordException, InvalidFriendException, NullPointerException  {
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
-        if(passw != this.password) throw new InvalidPasswordException();
+        if(!this.password.equals(passw)) throw new InvalidPasswordException();
         if(friend == null || Category == null) throw new NullPointerException();
         if(!this.elements.get(Category).removeFriend(friend)) throw new InvalidFriendException();
     }
@@ -128,13 +128,13 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.data
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws DuplicateDataException if exist h = 1, ...., numData(categoria) | data = el_i.data[h]
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
     public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, DuplicateDataException, InvalidPasswordException {
         if(this.elements.get(categoria) == null) throw new InvalidCategoryExcetpion();
-        if(passw != this.password) throw new InvalidPasswordException();
+        if(!this.password.equals(passw)) throw new InvalidPasswordException();
         
         this.elements.get(categoria).addData(dato);
 
@@ -148,11 +148,11 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @param passw this.password = passw
      * @param dato t.c. exist i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
      * @throws InvalidDataException if forall k = 1, ...., numCategories | ( forall h = 1, ..., numData(el_i.categoryName) | el_k.data[h] != dato )
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @return this.el_i.data[j]
      */
     public E get(String passw, E dato) throws InvalidDataException, InvalidPasswordException {
-        if(passw != this.password) throw new InvalidPasswordException();
+        if(!this.password.equals(passw)) throw new InvalidPasswordException();
         
         Collection<Category<E>> categories = this.elements.values();
 
@@ -171,7 +171,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @param dato t.c. exist i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
      * @param passw t.c. password = this.password
      * @modifies this.el_i.data
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws InvalidDataException if forall k = 1, ...., numCategories | ( forall h = 1, ..., numData(el_k.categoryName) | el_k.data[h] != dato )
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato forall i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
      * @return this.el_i.data[j]
@@ -194,13 +194,13 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * 
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
      * @param passw t.c. password = this.passw
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @throws NullPointerException if Category = null
      * @return { data[1], ..., data[numData(el_i.categoryName)] }
      */
     public List<E> getDataCategory(String passw, String Category) throws InvalidCategoryExcetpion, InvalidPasswordException {
-        if(passw != this.password) throw new InvalidPasswordException();
+        if(!this.password.equals(passw)) throw new InvalidPasswordException();
         if(Category == null) throw new NullPointerException();
         if(this.elements.get(Category) == null) throw new InvalidCategoryExcetpion();
         
@@ -213,14 +213,14 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * 
      * @param passw t.c. password = this.passw
      * @modifies this.elems
-     * @throws InvalidPasswordException if passw != this.password
+     * @throws InvalidPasswordException if !this.password.equals(passw)
      * @return iteratore di data[iter_1], ...., data[iter_n], lista ordinata con
      *          n = numData(el_1.categoryName) + ... + numData(el_numCategories().categoryName) &&
      *          forall i = 1, ..., n | ( exist j = 1, ...., numCategories() | ( exist k = 1, ..., numData(el_j.categoryName) | el_j.data[k] = data[iter_i] ) ) &&
      *          (forall i,j = 1, ...., n | i < j => data[iter_i].likes < data[iter_j].likes)
      */
     public Iterator<E> getIterator(String passw) throws InvalidPasswordException {
-        if(passw != this.password) throw new InvalidPasswordException();
+        if(!this.password.equals(passw)) throw new InvalidPasswordException();
 
         List<E> bacheca = new ArrayList<E>();
 
