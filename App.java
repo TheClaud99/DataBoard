@@ -1,37 +1,146 @@
 import java.util.Iterator;
+import java.util.List;
 
 public class App {
+    private static DataBoard<Data<?>> board;
+
     public static void main(String[] args) {
-        DataBoard<Data<?>> board = new Board<Data<?>>("garde");
-        String category1 = "Category1";
-        String category2 = "Category2";
-        Data<String> post1 = new myData<String>("Buongiornissimo caffe");
-        Data<String> post2 = new myData<String>("Buonasera");
-        Data<Integer> post3 = new myData<Integer>(3);
-        board.createCategory(category1, "garde");
-        board.createCategory(category2, "garde");
-        board.addFriend(category1, "garde", "iliu");
+
+        String password = "garde";
+
+        board = new Board<Data<?>>("garde");
+    }
+
+    private static void addPost(String password, Data<?> post, String category) {
+        try {
+            board.put(password, post, category);
+        } catch (DuplicateDataException e) {
+            System.out.println("Dato gia' presente nella categoria");
+        } catch (InvalidCategoryExcetpion e) {
+            System.out.println(category + " non esistente");
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+        }
+    }
+
+    private static void removePost(String password, Data<?> post, String category) {
+        try {
+            board.remove(password, post);
+        } catch (InvalidDataException e) {
+            System.out.println("Dato non presente nella categoria");
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+        }
+    }
+    
+    private static Data<?> getPost(String password, Data<?> post) {
+        Data<?> dato = null;
         
-        board.put("garde", post1, category1);
-        board.put("garde", post3, category1);
-        board.put("garde", post2, category2);
-
-        board.insertLike("iliu", post1);
-        board.insertLike("iliu", post2);
-        board.insertLike("iliu", post1);
-
-        Data<?> post4 = board.get("garde", post1);
-        board.put("garde", post4, category1);
-        board.insertLike("iliu", post4);
-        Iterator<Data<?>> iter = board.getFriendIterator("iliu");
-
-        while(iter.hasNext())
-        {
-            iter.next().Display();
+        try {
+            dato = board.get(password, post);
+        } catch (InvalidDataException e) {
+            System.out.println("Dato non presente nella categoria");
+            return null;
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+            return null;
         }
 
-        board.removeFriend(category1, "garde", "iliu");
+        return dato;
+    }
 
-        // iter = board.getFriendIterator("iliu"); // should thorw InvalidFriendException
+    private static void createCategory(String password, String categoryName) {
+        try {
+            board.createCategory(categoryName, password);
+        } catch (ExistingCategoryException e) {
+            System.out.println(categoryName + " gia' esistente");
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+        }
+    }
+
+    private static void removeCategory(String password, String category) {
+        try {
+            board.removeCategory(category, password);
+        } catch (InvalidCategoryExcetpion e) {
+            System.out.println(category + " non esistente");
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+        }
+    }
+
+    private static void addFriend(String password, String friend, String category) {
+        try {
+            board.addFriend(category, password, friend);
+        } catch (InvalidCategoryExcetpion e) {
+            System.out.println(category + " non esistente");
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+        } catch (ExistingFriendException e) {
+            System.out.println(friend + "gia' presente in" + category);
+        }
+    }
+
+    private static void removeFriend(String password, String friend, String category) {
+        try {
+            board.removeFriend(category, password, friend);
+        } catch (InvalidCategoryExcetpion e) {
+            System.out.println(category + " non esistente");
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+        } catch (InvalidFriendException e) {
+            System.out.println(friend + "non presente nella categoria" + category);
+        }
+    }
+
+    private static List<Data<?>> getDataCategory(String password, String category) {
+        List<Data<?>> dataCategory = null;
+        
+        try {
+            dataCategory = board.getDataCategory(password, category);
+        } catch (InvalidCategoryExcetpion e) {
+            System.out.println(category + " non esistente");
+            return null;
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+            return null;
+        }
+
+        return dataCategory;
+    }
+
+    private static Iterator<Data<?>> getIterator(String password, String category) {
+        Iterator<Data<?>> iterator = null;
+        
+        try {
+            iterator = board.getIterator(password);
+        } catch (InvalidPasswordException e) {
+            System.out.println("Password errata");
+            return null;
+        }
+
+        return iterator;
+    }
+
+    private static void insertLike(String friend, Data<?> dato) {        
+        try {
+            board.insertLike(friend, dato);
+        } catch (InvalidDataException e) {
+            System.out.println("Dato non presente nella categoria");
+        } catch (InvalidFriendException e) {
+            System.out.println(friend + "inesistente");
+        }
+    }
+
+    private static Iterator<Data<?>> getFriendIterator(String friend) {
+        Iterator<Data<?>> iterator = null;
+        
+        try {
+            iterator = board.getFriendIterator(friend);
+        } catch (InvalidFriendException e) {
+            System.out.println(friend + "inesistente");
+        }
+
+        return iterator;
     }
 }
