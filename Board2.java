@@ -116,9 +116,14 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      * @throws NullPointerException if friend = null or Category = null
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
-    public void removeFriend(String Category, String passw, String friend) {
+    public void removeFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, InvalidFriendException, InvalidPasswordException {
         if(!this.friends.keySet().contains(Category)) throw new InvalidCategoryExcetpion();
-        if(passw != this.password) throw new InvalidPasswordException();
+        try {
+			if(passw != this.password) throw new InvalidPasswordException();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         if(friend == null || Category == null) throw new NullPointerException();
         if(!this.friends.get(Category).contains(friend)) throw new InvalidFriendException();
 
@@ -138,7 +143,7 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      * @throws DuplicateDataException if exist h = 1, ...., numData(categoria) | data = el_i.data[h]
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
-    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException {
+    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, InvalidPasswordException {
         if(!this.dataSet.keySet().contains(categoria)) throw new InvalidCategoryExcetpion();
         if(passw != this.password) throw new InvalidPasswordException();
         if(this.dataSet.get(categoria).contains(dato)) throw new DuplicateDataException();
@@ -157,7 +162,7 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      * @throws InvalidPasswordException if passw != this.password
      * @return this.el_i.data[j]
      */
-    public E get(String passw, E dato) {
+    public E get(String passw, E dato) throws InvalidDataException, InvalidPasswordException {
         if(passw != this.password) throw new InvalidPasswordException();
 
         Collection<String> categories = this.dataSet.keySet();
@@ -182,7 +187,7 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato forall i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
      * @return this.el_i.data[j]
      */
-    public E remove(String passw, E dato) {
+    public E remove(String passw, E dato) throws InvalidDataException, InvalidPasswordException {
         if(passw != this.password) throw new InvalidPasswordException();
 
         boolean found = false;
@@ -208,7 +213,7 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      * @throws NullPointerException if Category = null
      * @return { data[1], ..., data[numData(el_i.categoryName)] }
      */
-    public List<E> getDataCategory(String passw, String Category) {
+    public List<E> getDataCategory(String passw, String Category) throws InvalidCategoryExcetpion, InvalidPasswordException {
         if(passw != this.password) throw new InvalidPasswordException();
         if(Category == null) throw new NullPointerException();
         if(!this.dataSet.keySet().contains(Category)) throw new InvalidCategoryExcetpion();
@@ -250,7 +255,7 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
-    public void insertLike(String friend, E dato) {
+    public void insertLike(String friend, E dato) throws InvalidFriendException, InvalidDataException {
 
         if(friend == null || dato == null) throw new NullPointerException();
 
@@ -329,11 +334,4 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
         return this.dataSet.get(category).size();
     }
 
-}
-
-class SortByLikes implements Comparator<Data<?>> {
-    public int compare(Data<?> a, Data<?> b) 
-    { 
-        return b.getLikes() - a.getLikes(); 
-    } 
 }
