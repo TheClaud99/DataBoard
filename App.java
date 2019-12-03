@@ -2,16 +2,75 @@ import java.util.Iterator;
 import java.util.List;
 
 public class App {
-    private static DataBoard<Data<?>> board;
+    private static DataBoard<myData<?>> board;
 
     public static void main(String[] args) {
 
         String password = "garde";
 
-        board = new Board<Data<?>>("garde");
+        /************************ /
+        /      Prima batteria     / 
+        /         di test         / 
+        /*************************/
+        System.out.println();
+        System.out.println("Prima batteria di test:");
+        board = new Board<myData<?>>("garde");
+        test();
+
+
+        /************************ /
+        /     Seconda batteria    / 
+        /         di test         / 
+        /*************************/
+        System.out.println();
+        System.out.println("Seconda batteria di test:");
+        board = new Board2<myData<?>>("garde");
+        test();
     }
 
-    private static void addPost(String password, Data<?> post, String category) {
+    private static void test() {
+        // Posts
+        myData<String> post1 = new myData<String>("Garde iliu");
+        myData<String> post2 = new myData<String>("Buongiorno");
+        myData<String> post3 = new myData<String>("Oggi è bel tempo");
+
+        // Freinds
+        String friend1 = "iliu";
+        String friend2 = "Mario";
+
+        createCategory("garde", "animali");
+        createCategory("garde", "tempo");
+        addFriend("garde", friend1, "animali");
+        addFriend("garde", friend1, "tempo");
+        addFriend("garde", friend2, "animali");
+        addPost("garde", post1, "animali");
+        addPost("garde", post2, "animali");
+        addPost("garde", post1, "tempo");
+        addPost("garde", post3, "tempo");
+        insertLike(friend1, post1);
+        insertLike(friend1, post2);
+        insertLike("Mario", post2);
+
+        Iterator<myData<?>> iterator =  getIterator("garde");
+        System.out.println("Tutti i post in bacheca");
+        while(iterator.hasNext()) {
+            iterator.next().Display();
+        }
+
+        System.out.println("Post visibili all'amico " + friend1);
+        iterator = getFriendIterator(friend1);
+        while(iterator.hasNext()) {
+            iterator.next().Display();
+        }
+
+        System.out.println("Post visibili all'amico " + friend2);
+        iterator = getFriendIterator(friend2);
+        while(iterator.hasNext()) {
+            iterator.next().Display();
+        }
+    }
+
+    private static void addPost(String password, myData<?> post, String category) {
         try {
             board.put(password, post, category);
         } catch (DuplicateDataException e) {
@@ -23,7 +82,7 @@ public class App {
         }
     }
 
-    private static void removePost(String password, Data<?> post, String category) {
+    private static void removePost(String password, myData<?> post, String category) {
         try {
             board.remove(password, post);
         } catch (InvalidDataException e) {
@@ -33,7 +92,7 @@ public class App {
         }
     }
     
-    private static Data<?> getPost(String password, Data<?> post) {
+    private static Data<?> getPost(String password, myData<?> post) {
         Data<?> dato = null;
         
         try {
@@ -93,8 +152,8 @@ public class App {
         }
     }
 
-    private static List<Data<?>> getDataCategory(String password, String category) {
-        List<Data<?>> dataCategory = null;
+    private static List<myData<?>> getDataCategory(String password, String category) {
+        List<myData<?>> dataCategory = null;
         
         try {
             dataCategory = board.getDataCategory(password, category);
@@ -109,8 +168,8 @@ public class App {
         return dataCategory;
     }
 
-    private static Iterator<Data<?>> getIterator(String password, String category) {
-        Iterator<Data<?>> iterator = null;
+    private static Iterator<myData<?>> getIterator(String password) {
+        Iterator<myData<?>> iterator = null;
         
         try {
             iterator = board.getIterator(password);
@@ -122,7 +181,7 @@ public class App {
         return iterator;
     }
 
-    private static void insertLike(String friend, Data<?> dato) {        
+    private static void insertLike(String friend, myData<?> dato) {        
         try {
             board.insertLike(friend, dato);
         } catch (InvalidDataException e) {
@@ -132,8 +191,8 @@ public class App {
         }
     }
 
-    private static Iterator<Data<?>> getFriendIterator(String friend) {
-        Iterator<Data<?>> iterator = null;
+    private static Iterator<myData<?>> getFriendIterator(String friend) {
+        Iterator<myData<?>> iterator = null;
         
         try {
             iterator = board.getFriendIterator(friend);
