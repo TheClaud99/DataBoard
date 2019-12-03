@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Board<E extends Data<?>> implements DataBoard<E> {
 
@@ -222,14 +223,12 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
     public Iterator<E> getIterator(String passw) throws InvalidPasswordException {
         if(!this.password.equals(passw)) throw new InvalidPasswordException();
 
-        List<E> bacheca = new ArrayList<E>();
+        SortedSet<E> bacheca = new TreeSet<E>(new SortByLikes());
 
         for(Category<E> category : this.elements.values())
             bacheca.addAll(category.getData());
-        
-        bacheca.sort(new SortByLikes());
-        
-        return Collections.unmodifiableList(bacheca).iterator();
+                
+        return Collections.unmodifiableSortedSet(bacheca).iterator();
     }
 
     // Aggiunge un like a un dato
@@ -281,14 +280,14 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
     public Iterator<E> getFriendIterator(String friend) throws InvalidFriendException {
         if(friend == null) throw new NullPointerException();
         
-        List<E> bacheca = new ArrayList<E>();
+        Set<E> bacheca = new HashSet<E>();
 
         for(Category<E> category : this.elements.values())
             if(category.getFriends().contains(friend)) bacheca.addAll(category.getData());
 
         if(bacheca.isEmpty()) throw new InvalidFriendException();
 
-        return Collections.unmodifiableList(bacheca).iterator();
+        return Collections.unmodifiableSet(bacheca).iterator();
     }
 
     /**

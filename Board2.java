@@ -235,14 +235,12 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      */
     public Iterator<E> getIterator(String passw) {
 
-        List<E> bacheca = new ArrayList<E>();
+        SortedSet<E> bacheca = new TreeSet<E>(new SortByLikes());
 
         for(String category : this.dataSet.keySet())
             bacheca.addAll(this.dataSet.get(category));
-        
-        bacheca.sort(new SortByLikes());
-        
-        return Collections.unmodifiableList(bacheca).iterator();
+                
+        return Collections.unmodifiableSortedSet(bacheca).iterator();
     }
 
     // Aggiunge un like a un dato
@@ -296,14 +294,14 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     public Iterator<E> getFriendIterator(String friend) throws InvalidFriendException {
         if(friend == null) throw new NullPointerException();
         
-        List<E> bacheca = new ArrayList<E>();
+        Set<E> bacheca = new HashSet<E>();
 
         for(String category : this.dataSet.keySet())
             if(friends.get(category).contains(friend)) bacheca.addAll(this.dataSet.get(category));
 
         if(bacheca.isEmpty()) throw new InvalidFriendException();
 
-        return Collections.unmodifiableList(bacheca).iterator();
+        return Collections.unmodifiableSet(bacheca).iterator();
     }
 
     /**
