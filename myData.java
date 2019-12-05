@@ -72,7 +72,7 @@ class myData <E> implements Data<E>{
      * 
      * @effects post(this.likes) = pre(this.likes) + 1
      */
-    public void insertLike(String friend) throws IllegalArgumentException, DuplicateLikeException
+    public void insertLike(String friend) throws NullPointerException, DuplicateLikeException
     {
         if(this.friendsLikes.contains(friend)) throw new DuplicateLikeException();
 

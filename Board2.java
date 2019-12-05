@@ -43,18 +43,18 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      /**
      * Crea l’identità una categoria di dati
      * 
-     * @param Category t.c. Category != null && (forall i = 1, ...., numCategories() | el_i.categoryName != Category)
+     * @param Category t.c. !this.dataSet.containsKey(Category)
      * @param passw t.c. password = passw
      * @modifies this.elems
      * @throws NullPointerException if Category = null
      * @throws InvalidPasswordException if !this.password.equals(passw)
-     * @throws ExistingCategoryException if (exist i = 1, ..., numCategories() | el_i.categoryName = Category)
+     * @throws ExistingCategoryException if this.dataSet.containsKey(Category)
      * @effects post(this.elems) = pre(this.el_i) U <Category, null, null>
      */
     public void createCategory(String Category, String passw) throws NullPointerException, InvalidPasswordException, ExistingCategoryException {
         if(Category == null) throw new NullPointerException();
         if(!this.password.equals(passw)) throw new InvalidPasswordException();
-        if(this.dataSet.keySet().contains(Category)) throw new ExistingCategoryException();
+        if(this.dataSet.containsKey(Category)) throw new ExistingCategoryException();
 
         dataSet.put(Category, new ArrayList<E>());
         friends.put(Category, new ArrayList<String>());
@@ -64,17 +64,17 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     // Rimuove l’identità una categoria di dati
     /**
      * 
-     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
+     * @param Category t.c. this.dataSet.containsKey(Category)
      * @param passw t.c. password = this.passw
      * @modifies this.elems
-     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if !this.dataSet.containsKey(Category)
      * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws NullPointerException if Category = null
      * @effects post(this.elems) = pre(this.elems) \ el_i
      */
     public void removeCategory(String Category, String passw) throws InvalidCategoryExcetpion, InvalidPasswordException {
         if(Category == null) throw new NullPointerException();
-        if(!this.dataSet.keySet().contains(Category)) throw new InvalidCategoryExcetpion();
+        if(!this.dataSet.containsKey(Category)) throw new InvalidCategoryExcetpion();
         if(!this.password.equals(passw)) throw new InvalidPasswordException();
 
         this.dataSet.remove(Category);
@@ -84,19 +84,19 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     // Aggiunge un amico ad una categoria di dati
     /**
      * 
-     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
+     * @param Category t.c. this.friends.containsKey(Category)
      * @param passw t.c. password = this.passw
-     * @param friend t.c. friend != null and (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
+     * @param friend t.c. !this.friends.get(Category).contains(friend)
      * @modifies this.el_i.friends
-     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if !this.friends.containsKey(Category)
      * @throws NullPointerException if Category = null
-     * @throws ExistingFriendException if (exist j = 1, ...., numFriendns(Category) | el_i.friend[j] = friend)
+     * @throws ExistingFriendException if this.friends.get(Category).contains(friend)
      * @throws InvalidPasswordException if !this.password.equals(passw)
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) U friend
      */
     public void addFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, ExistingFriendException, InvalidPasswordException {
         if(Category == null) throw new NullPointerException();
-        if(!this.friends.keySet().contains(Category)) throw new InvalidCategoryExcetpion();
+        if(!this.friends.containsKey(Category)) throw new InvalidCategoryExcetpion();
         if(this.friends.get(Category).contains(friend)) throw new ExistingFriendException();
         if(!this.password.equals(passw)) throw new InvalidPasswordException();
 
@@ -106,18 +106,18 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     // rimuove un amico ad una categoria di dati
     /**
      * 
-     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
-     * @param friend t.c. friend != null and (exist j = 1, ...., numFriendns(Category) | el_i.friend[j] = friend)
+     * @param Category t.c. this.friends.containsKey(Category)
+     * @param friend t.c. this.friends.get(Category).contains(friend)
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.friends
-     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if !this.friends.containsKey(Category)
      * @throws InvalidPasswordException if !this.password.equals(passw)
-     * @throws InvalidFriendException if (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
+     * @throws InvalidFriendException if !this.friends.get(Category).contains(friend)
      * @throws NullPointerException if friend = null or Category = null
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
     public void removeFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, InvalidFriendException, InvalidPasswordException {
-        if(!this.friends.keySet().contains(Category)) throw new InvalidCategoryExcetpion();
+        if(!this.friends.containsKey(Category)) throw new InvalidCategoryExcetpion();
 		if(!this.password.equals(passw)) throw new InvalidPasswordException();
         if(friend == null || Category == null) throw new NullPointerException();
         if(!this.friends.get(Category).contains(friend)) throw new InvalidFriendException();
@@ -129,21 +129,21 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     // se vengono rispettati i controlli di identità
     /**
      * 
-     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
-     * @param dato t.c. dato != null
+     * @param Category t.c. this.dataSet.containsKey(categoria)
+     * @param dato t.c. !this.dataSet.get(categoria).contains(dato)
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.data
-     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if !this.dataSet.containsKey(categoria)
      * @throws InvalidPasswordException if !this.password.equals(passw)
-     * @throws DuplicateDataException if exist h = 1, ...., numData(categoria) | data = el_i.data[h]
+     * @throws DuplicateDataException if this.dataSet.get(categoria).contains(dato)
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
     public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, InvalidPasswordException {
-        if(!this.dataSet.keySet().contains(categoria)) throw new InvalidCategoryExcetpion();
+        if(!this.dataSet.containsKey(categoria)) throw new InvalidCategoryExcetpion();
         if(!this.password.equals(passw)) throw new InvalidPasswordException();
         if(this.dataSet.get(categoria).contains(dato)) throw new DuplicateDataException();
-        this.dataSet.get(categoria).add(dato);
 
+        this.dataSet.get(categoria).add(dato);
         return this.dataSet.get(categoria).contains(dato);
     }
     
@@ -152,8 +152,8 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     /**
      * 
      * @param passw this.password = passw
-     * @param dato t.c. exist i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
-     * @throws InvalidDataException if forall k = 1, ...., numCategories | ( forall h = 1, ..., numData(el_i.categoryName) | el_k.data[h] != dato )
+     * @param dato t.c. exist category = categories.get(1), ..., categories.get(dim) | this.dataSet.get(category).contains(dato)
+     * @throws InvalidDataException if forall category = categories.get(1), ..., categories.get(dim) | !this.dataSet.get(category).contains(dato)
      * @throws InvalidPasswordException if !this.password.equals(passw)
      * @return this.el_i.data[j]
      */
@@ -174,11 +174,11 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     // se vengono rispettati i controlli di identità
     /**
      * 
-     * @param dato t.c. exist i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
+     * @param dato t.c. exist category = categories.get(1), ..., categories.get(dim) | this.dataSet.get(category).contains(dato)
      * @param passw t.c. password = this.password
      * @modifies this.el_i.data
      * @throws InvalidPasswordException if !this.password.equals(passw)
-     * @throws InvalidDataException if forall k = 1, ...., numCategories | ( forall h = 1, ..., numData(el_k.categoryName) | el_k.data[h] != dato )
+     * @throws InvalidDataException if forall category = categories.get(1), ..., categories.get(dim) | !this.dataSet.get(category).contains(dato)
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato forall i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
      * @return this.el_i.data[j]
      */
@@ -201,17 +201,17 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     // se vengono rispettati i controlli di identità
     /**
      * 
-     * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
+     * @param Category t.c. this.dataSet.containsKey(Category)
      * @param passw t.c. password = this.passw
      * @throws InvalidPasswordException if !this.password.equals(passw)
-     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
+     * @throws InvalidCategoryExcetpion if !this.dataSet.containsKey(Category)
      * @throws NullPointerException if Category = null
      * @return { data[1], ..., data[numData(el_i.categoryName)] }
      */
     public List<E> getDataCategory(String passw, String Category) throws InvalidCategoryExcetpion, InvalidPasswordException {
         if(!this.password.equals(passw)) throw new InvalidPasswordException();
         if(Category == null) throw new NullPointerException();
-        if(!this.dataSet.keySet().contains(Category)) throw new InvalidCategoryExcetpion();
+        if(!this.dataSet.containsKey(Category)) throw new InvalidCategoryExcetpion();
         
         return this.dataSet.get(Category);
     }
@@ -241,10 +241,10 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     // Aggiunge un like a un dato
     /**
      * 
-     * @param friend t.c. exist i = 1, ..., numCategories | ( exist j = 1, ..., numFriends(el_i.categoryName) | friend = el_i.friend[j]) 
-     * @param dato t.c. dato != null && (exist k = 1, ...., numData(el_i.categoryName) | el_i.data[k] = dato)
-     * @throws InvalidFriendException if forall h = 1, ...., numCategories() | ( forall l = 1, ...., numFriends(el_h.categoryName) | el_h.friend[l] != friend)
-     * @throws InvalidDataException if forall l = 1, ..., numData(el_i.categoryName) | el_k.data[l] != dato
+     * @param friend t.c. exist category = categories.get(1), ..., categories.get(dim) | this.friends.get(category).contains(friend)
+     * @param dato t.c. exist category = categories.get(1), ..., categories.get(dim) | (this.friends.get(category).contains(friend) && this.friends.get(category).contains(dato))
+     * @throws InvalidFriendException if forall category = categories.get(1), ..., categories.get(dim) | !this.friends.get(category).contains(friend)
+     * @throws InvalidDataException if forall category = categories.get(1), ..., categories.get(dim) | !(this.friends.get(category).contains(friend) && this.friends.get(category).contains(dato))
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
@@ -278,8 +278,8 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
     // bacheca condivisi.
     /**
      * 
-     * @param friend t.c. exist i = 1, ..., numCategories | ( exist j = 1, ..., numFriends(el_i.categoryName) | friend = el_i.friend[j]) 
-     * @throws InvalidFriendException if forall h = 1, ...., numCategories() | ( forall l = 1, ...., numFriends(el_h.categoryName) | el_h.friend[l] != friend)
+     * @param friend t.c. exist category = categories.get(1), ..., categories.get(dim) | this.friends.get(category).contains(friend)
+     * @throws InvalidFriendException if forall category = categories.get(1), ..., categories.get(dim) | !this.friends.get(category).contains(friend)
      * @throws NullPointerException if friend = null
      * @return iteratore di data[iter_1], ...., data[iter_n], lista ordinata con
      *          n = numData(el_cat_1.categoryName) + ... + numData(el_cat_m) &&
@@ -301,7 +301,7 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
 
     /**
      * 
-     * @return #elems
+     * @return dim
      */
     public int numCategories() {
         return this.dim;
@@ -309,21 +309,21 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
 
     /**
      * 
-     * @param category t.c. category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = category)
-     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != category)
-     * @return #el_i.friends
+     * @param category t.c. this.dataSet.containsKey(Category)
+     * @throws InvalidCategoryExcetpion if !this.dataSet.containsKey(Category)
+     * @return this.friends.get(category).size()
      */
-    public int numFriends(String category) {
+    public int numFriends(String category) throws InvalidCategoryExcetpion {
         return this.friends.get(category).size();
     }
 
     /**
      * 
-     * @param category t.c. category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = category)
-     * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != category)
-     * @return #el_i.dataSet
+     * @param category t.c. this.dataSet.containsKey(Category)
+     * @throws InvalidCategoryExcetpion if !this.dataSet.containsKey(Category)
+     * @return this.dataSet.get(category).size()
      */
-    public int numData(String category) {
+    public int numData(String category) throws InvalidCategoryExcetpion {
         return this.dataSet.get(category).size();
     }
 

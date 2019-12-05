@@ -77,7 +77,7 @@ public interface DataBoard<E extends Data<?>> {
     /**
      * 
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
-     * @param dato t.c. dato != null
+     * @param dato t.c. dato != null && forall j = 1, ...., numData(categoria) | data != el_i.data[j]
      * @param passw t.c. password = this.passw
      * @modifies this.el_i.data
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
@@ -178,7 +178,7 @@ public interface DataBoard<E extends Data<?>> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != category)
      * @return #el_i.friends
      */
-    public int numFriends(String category);
+    public int numFriends(String category) throws InvalidCategoryExcetpion;
 
     /**
      * 
@@ -186,7 +186,7 @@ public interface DataBoard<E extends Data<?>> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != category)
      * @return #el_i.dataSet
      */
-    public int numData(String Category);
+    public int numData(String Category) throws InvalidCategoryExcetpion;
 }
 
 /************************ /
