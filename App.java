@@ -205,6 +205,8 @@ public class App {
             System.out.println("Dato inesistente");
         } catch (InvalidFriendException e) {
             System.out.println(friend + " inesistente");
+        } catch (DuplicateLikeException e) {
+            System.out.println("L'amico " + friend + " ha già messo like al post");
         }
     }
 

@@ -51,7 +51,7 @@ class myData <E> implements Data<E>{
     public void Display()
     {
         System.out.println();
-        System.out.println(this.el);
+        System.out.println(this.el.toString());
         System.out.println(this.numLikes + " ♥");
         System.out.println("------------------");
         

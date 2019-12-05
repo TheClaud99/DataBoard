@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Board<E extends Data<?>> implements DataBoard<E> {
 
@@ -10,17 +9,17 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * 
      *              categories = elements.values()
      * 
-     * AF:          <password, { el_0, ..., el_i, ..., el_categories.size() }> con
-     *                  forall i = 0, ..., categories.size() | 
-     *                      el_i = <categories.get(i).getCategoryName, categories.get(i).getData, categories.get(i).getFriends()>
+     * AF:          <password, { el_0, ..., el_dim }, dim> con
+     *                  forall i = 0, ..., dim | 
+     *                      el_i = <categories.get(i).getCategoryName(), categories.get(i).getData, categories.get(i).getFriends()>
      *                      categories.get(i).categoryName != null    
      * 
-     * IR:          password != null && 
-     *              ( forall i = 1, ..., categories.size()  |
+     * IR:          password != null && dim = categories.size() &&
+     *              ( forall i = 1, ..., dim  |
      *                      categories.get(i).categoryName != null 
-     *                      && ( forall j = 0, ..., categories.size() | categories.get(i).getCategoryName() != categories.get(j).categoryName() ) )
-     *                      && ( forall k, l = 0, ..., categories.size() | k != l => categories.get(i).getFriend(k) != categories.get(i).getFriend(l) )
-     *                      && ( forall m, n = 0, ..., categories.size() | m != n => categories.get(i).getData(m) != categories.get(i).getData(n) ) )
+     *                      && ( forall j = 0, ..., dim | categories.get(i).getCategoryName() != categories.get(j).categoryName() ) )
+     *                      && ( forall k, l = 0, ..., dim | k != l => categories.get(i).getFriend(k) != categories.get(i).getFriend(l) )
+     *                      && ( forall m, n = 0, ..., dim | m != n => categories.get(i).getData(m) != categories.get(i).getData(n) ) )
      *                      
      */
 
@@ -241,7 +240,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
-    public void insertLike(String friend, E dato) throws InvalidFriendException, InvalidDataException {
+    public void insertLike(String friend, E dato) throws InvalidFriendException, InvalidDataException, DuplicateLikeException {
 
         if(friend == null || dato == null) throw new NullPointerException();
 
@@ -251,11 +250,7 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
             foundFriend = !foundFriend ? category.contains(friend) : true;
             foundPost = !foundPost ? category.contains(dato) : true;
             if(category.contains(dato) && category.contains(friend)) {
-                try {
-                    dato.insertLike(friend);
-                } catch(DuplicateLikeException e) {
-                    System.out.println(friend + " ha gia' messo like al post");
-                }
+                dato.insertLike(friend);
                 return;
             }
         }

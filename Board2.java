@@ -10,17 +10,17 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      * 
      *              categories = dataset.keySet() = friends.keySet()
      * 
-     * AF:          <password, { el_0, ..., el_i, ..., el_categories.size() }> con
-     *                  forall i = 0, ..., categories.size() | 
+     * AF:          <password, { el_0, ..., el_dim }, dim> con
+     *                  forall i = 0, ..., dim | 
      *                      el_i = <categories.get(i), dataSet.get(categories.get(i)), friends.get(categories.get(i))>
      *                      categories.get(i) != null
      * 
-     * IR:          password != null && 
-     *              ( forall i = 1, ..., categories.size()  |
+     * IR:          password != null && dim = categories.size() && 
+     *              ( forall i = 1, ..., dim |
      *                      categories.get(i) != null 
-     *                      && ( forall j = 0, ..., categories.size() | categories.get(i) != categories.get(j) ) )
-     *                      && ( forall k, l = 0, ..., categories.size() | k != l => friends.get(categories.get(i)).get(k) != friends.get(categories.get(i)).get(l) )
-     *                      && ( forall m, n = 0, ..., categories.size() | m != n => dataSet.get(categories.get(i)).get(m) != dataSet.get(categories.get(i)).get(n) ) )
+     *                      && ( forall j = 0, ..., dim | categories.get(i) != categories.get(j) ) )
+     *                      && ( forall k, l = 0, ..., dim | k != l => friends.get(categories.get(i)).get(k) != friends.get(categories.get(i)).get(l) )
+     *                      && ( forall m, n = 0, ..., dim | m != n => dataSet.get(categories.get(i)).get(m) != dataSet.get(categories.get(i)).get(n) ) )
      *              && dataset.keySet() = friends.keySet()
      *                      
      */
@@ -118,12 +118,7 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      */
     public void removeFriend(String Category, String passw, String friend) throws InvalidCategoryExcetpion, InvalidFriendException, InvalidPasswordException {
         if(!this.friends.keySet().contains(Category)) throw new InvalidCategoryExcetpion();
-        try {
-			if(!this.password.equals(passw)) throw new InvalidPasswordException();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if(!this.password.equals(passw)) throw new InvalidPasswordException();
         if(friend == null || Category == null) throw new NullPointerException();
         if(!this.friends.get(Category).contains(friend)) throw new InvalidFriendException();
 

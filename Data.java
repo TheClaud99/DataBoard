@@ -1,22 +1,27 @@
 public interface Data<E> {
     
     /**
-     * Overview:    dato di un qualsiasi tipo sul quale può essere applicato il metodo display
+     * Overview:    Contenitore di un parametro generico con associate descrizione, autore e insieme degli amici
+     *              che hanno inserito un like
      * 
-     * TE:          <element, likes>, element != null and likes >= 0
+     * TE:          <element, friends, numLikes>, 
+     *              element != null &&
+     *              friends = { friend_1, friend_2, ..., friends_getLikes() } &&
+     *              likes = #friends
      */
 
-    // Cambia il valore di el
+    // Mofica il valore di el
     /**
      * 
      * @param el, el != null
-     * @throws NullPointerException
+     * @throws NullPointerException if el = null
+     * @modifies this.element
      * @effects post(this.element) = el
      * 
      */
     public void updateData(E el);
 
-    // Prende il valore di element
+    // Restituisce il valore dell'elemento
     /**
      * 
      * @return element
@@ -26,7 +31,7 @@ public interface Data<E> {
     // Restituisce il numero di like associati al dato
     /**
      * 
-     * @return likes
+     * @return this.likes
      */
     public int getLikes();
 
@@ -38,11 +43,18 @@ public interface Data<E> {
     public void Display();
 
     /**
-     * 
-     * @return true se obj.getData() = this.getData(), false altrimenti
+     * @param friend t.c. forall i = 1, ..., getLikes() | friend_i != friend
+     * @throws DuplicateLikeException if exist i = 1, ..., getLikes() | friend_i = friend
+     * @modifies this.likes && this.friends
+     * @effects post(this.likes) = this.likes + 1 && post(this.friends) = pre(this.friends) U friend
      */
     
-    public void insertLike(String friend) throws IllegalArgumentException, DuplicateLikeException;
+    public void insertLike(String friend) throws NullPointerException, DuplicateLikeException;
 
+    /**
+     * 
+     * @return una deep copy di this
+     */
+    
     public Data<E> cloneData();
 }

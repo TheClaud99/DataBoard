@@ -8,7 +8,7 @@ public interface DataBoard<E extends Data<?>> {
      * Overview:    contenitore di oggetti generici che estendono il tipo di dato Data. Ogni
      *              dato presente nella bacheca ha associato la categoria del dato.
      * 
-     * TE:          <password, elems = { el_0, ..., el_i, ..., el_numCategories() }> con
+     * TE:          <password, elems = { el_0, ..., el_i, ..., el_numCategories() }, dim> con
      *                  forall i = 1, ..., numCategories | el_i = <categoryName, dataSet, friends> con
      *                      categoryName != null    
      *                      dataSet = getDataCategory(password, categoryName)
@@ -103,19 +103,19 @@ public interface DataBoard<E extends Data<?>> {
     // se vengono rispettati i controlli di identità
     /**
      * 
-     * @param dato t.c. exist i = 1, ...., numCategories | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
+     * @param dato t.c. exist i = 1, ...., numCategories() | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
      * @param passw t.c. password = this.password
      * @modifies this.el_i.data
      * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws InvalidDataException if forall k = 1, ...., numCategories | ( forall h = 1, ..., numData(el_k.categoryName) | el_k.data[h] != dato )
      * @throws NullPointerException if Category = null
-     * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato
-     * @return this.el_i.data[j]
+     * @effects post(this.el_i.data) = pre(this.el_i.dataSet) \ dato forall i = 1, ...., numCategories() | ( exist j = 1, ..., numData(el_i.categoryName) | el_i.data[j] = dato )
+     * @return dato
      */
     public E remove(String passw, E dato) throws InvalidDataException, InvalidPasswordException;
 
     // Crea la lista dei dati in bacheca su una determinata categoria
-    // se vengono rispettati i controlli di identitàù
+    // se vengono rispettati i controlli di identità
     /**
      * 
      * @param Category t.c. Category != null && (exist i = 1, ...., numCategories() | el_i.categoryName = Category)
@@ -150,7 +150,7 @@ public interface DataBoard<E extends Data<?>> {
      * @modifies this.el_i.data[k].likes
      * @effects post(this.el_i.data[k].likes) = pre(this.el_i.data[k].likes) + 1
      */
-    public void insertLike(String friend, E dato) throws InvalidFriendException, InvalidDataException;
+    public void insertLike(String friend, E dato) throws InvalidFriendException, InvalidDataException, DuplicateLikeException;
 
     // Legge un dato condiviso
     // restituisce un iteratore (senza remove) che genera tutti i dati in
