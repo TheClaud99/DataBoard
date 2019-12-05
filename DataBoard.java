@@ -67,7 +67,7 @@ public interface DataBoard<E extends Data<?>> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws InvalidFriendException if (forall j = 1, ...., numFriendns(Category) | el_i.friend[j] != friend)
-     * @throws NullPointerException
+     * @throws NullPointerException if Category = null or friend = null
      * @effects post(this.el_i.friends) = pre(this.el_i.friends) \ friend
      */
     public void removeFriend(String Category, String passw, String friend) throws InvalidFriendException, InvalidCategoryExcetpion, InvalidPasswordException, NullPointerException;
@@ -83,9 +83,10 @@ public interface DataBoard<E extends Data<?>> {
      * @throws InvalidCategoryExcetpion if (forall j = 1, ..., numCategories() | el_j.categoryName != Category)
      * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws DuplicateDataException if exist h = 1, ...., numData(categoria) | data = el_i.data[h]
+     * @throws NullPointerException if categoria = null or dato = null
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
-    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, InvalidPasswordException;
+    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, InvalidPasswordException, NullPointerException;
     
     // Ottiene una copia del del dato in bacheca
     // se vengono rispettati i controlli di identità
@@ -198,6 +199,9 @@ public interface DataBoard<E extends Data<?>> {
 class SortByLikes implements Comparator<Data<?>> {
     public int compare(Data<?> a, Data<?> b) 
     { 
+        if(b == null) return -1;
+        if(a == null) return 1;
+        
         return b.getLikes() - a.getLikes(); 
     } 
 }

@@ -6,15 +6,13 @@ public class App {
 
     public static void main(String[] args) {
 
-        String password = "garde";
-
         /************************ /
         /      Prima batteria     / 
         /         di test         / 
         /*************************/
         System.out.println();
         System.out.println("Prima batteria di test:");
-        board = new Board<myData<?>>("garde");
+        board = new Board<myData<?>>("p@55w0rd");
         test();
 
 
@@ -24,67 +22,63 @@ public class App {
         /*************************/
         System.out.println();
         System.out.println("Seconda batteria di test:");
-        board = new Board2<myData<?>>("garde");
+        board = new Board2<myData<?>>("p@55w0rd");
         test();
     }
 
     private static void test() {
         // Posts
-        myData<String> post1 = new myData<String>("Garde iliu");
+        myData<String> post1 = new myData<String>("Ciao a tutti, è una bella giornata");
         myData<String> post2 = new myData<String>("Buongiorno");
         myData<String> post3 = new myData<String>("Oggi è bel tempo");
 
         // Freinds
-        String friend1 = "iliu";
-        String friend2 = "Mario";
+        String friend1 = "Mario";
+        String friend2 = "Luca";
 
-        createCategory("garde", "animali");
-        createCategory("garde", "tempo");
-        addFriend("garde", friend1, "animali");
-        addFriend("garde", friend1, "tempo");
-        addFriend("garde", friend2, "animali");
-        addPost("garde", post1, "animali");
-        addPost("garde", post2, "animali");
-        addPost("garde", post1, "tempo");
-        addPost("garde", post3, "tempo");
-        insertLike(friend1, post1);
-        insertLike(friend1, post2);
-        insertLike("Mario", post2);
+        createCategory("password sbagliata", "saluti");     // Lancia un messaggio di password errata
+        createCategory("p@55w0rd", "saluti");               // Crea la categoria saluti
+        createCategory("p@55w0rd", "tempo");                // Crea la categoria tempo
+        createCategory("p@55w0rd", "tempo");                // Lancia un'eccezione di categoria già esistente
+        addFriend("p@55w0rd", friend1, "saluti");           // Aggiunge l'amico Mario a saluti
+        addFriend("p@55w0rd", friend1, "tempo");            // Aggiunge l'amico Mario a tempo
+        addFriend("p@55w0rd", friend2, "saluti");           // Aggiunge l'amico Luca a saluti
+        addPost("p@55w0rd", post1, "saluti");               // Aggiunge post "Ciao a tutti, è una bella giornata" a saluti
+        addPost("p@55w0rd", post2, "saluti");               // Aggiunge post "Buongiorno a tutti" a saluti 
+        addPost("p@55w0rd", post1, "tempo");                // Aggiunge post "Ciao a tutti, è una bella giornata" a tempo
+        addPost("p@55w0rd", post3, "tempo");                // Aggiunge post "Oggi è bel tempo" a tempo
+        addPost("p@55w0rd", post3, "tempo");                // Lancia un'eccezione di post già presente nella categoria
+        addPost("p@55w0rd", getPost("p@55w0rd", post3), "tempo");                // L'eccezione non viene lanciata perché la get restituisce una deep copy del dato
+        insertLike(friend1, post1);                         // Mario aggiunge like a "Ciao a tutti, è una bella giornata"
+        insertLike(friend1, post2);                         // Mario aggiunge like a "Buongiorno"
+        insertLike(friend2, post2);                         // Luca aggiunge like a "Buongiorno"
 
-        Iterator<myData<?>> iterator =  getIterator("garde");
+        Iterator<myData<?>> iterator =  getIterator("p@55w0rd");        // Prende iteratore della bacheca e scorre
         System.out.println("Tutti i post in bacheca");
         if(iterator != null)
             while(iterator.hasNext())
                 iterator.next().Display();
 
-        System.out.println("Post visibili all'amico " + friend1);
+        System.out.println();
+        System.out.println("Post visibili all'amico " + friend1);       // Prende iteratore dei post visibili all'amico Mario e scorre
         iterator = getFriendIterator(friend1);
         if(iterator != null)
             while(iterator.hasNext())
                 iterator.next().Display();
 
-        System.out.println("Post visibili all'amico " + friend2);
+        System.out.println();
+        System.out.println("Post visibili all'amico " + friend2);       // Prende iteratore dei post visibili all'amico Luca e scorre
         iterator = getFriendIterator(friend2);
         if(iterator != null)
             while(iterator.hasNext())
                 iterator.next().Display();
                 
-        removeCategory("garde", "animali");
-        getDataCategory("garde", "animali");
-        removePost("garde", post1, "tempo");
-        removeFriend("garde", "Mario", "tempo");
+        removeCategory("p@55w0rd", "saluti");                           // Rimuove la categoria saluti
+        getDataCategory("p@55w0rd", "saluti");                          // Lancia un'eccezione perché saluti non esiste più
+        removePost("p@55w0rd", post1, "tempo");                         // Rimuove il post "Ciao a tutti, è una bella giornata" da tempo
+        removeFriend("p@55w0rd", friend1, "tempo");                     // Rimuove l'amico mario da tempo
 
-        System.out.println("Post visibili all'amico " + friend1);
-        iterator = getFriendIterator(friend1);
-        if(iterator != null)
-            while(iterator.hasNext())
-                iterator.next().Display();
-
-        System.out.println("Post visibili all'amico " + friend2);
-        iterator = getFriendIterator(friend2);
-        if(iterator != null)
-            while(iterator.hasNext())
-                iterator.next().Display();
+        iterator = getFriendIterator(friend1);                          // Lancia un'eccezione perché Mario non è più presente in nessuna delle categorie
     }
 
     private static void addPost(String password, myData<?> post, String category) {
@@ -109,8 +103,8 @@ public class App {
         }
     }
     
-    private static Data<?> getPost(String password, myData<?> post) {
-        Data<?> dato = null;
+    private static myData<?> getPost(String password, myData<?> post) {
+        myData<?> dato = null;
         
         try {
             dato = board.get(password, post);

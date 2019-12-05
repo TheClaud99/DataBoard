@@ -136,12 +136,14 @@ public class Board2<E extends Data<?>> implements DataBoard<E> {
      * @throws InvalidCategoryExcetpion if !this.dataSet.containsKey(categoria)
      * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws DuplicateDataException if this.dataSet.get(categoria).contains(dato)
+     * @throws NullPointerException if categoria = null or dato = null
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
     public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, InvalidPasswordException {
         if(!this.dataSet.containsKey(categoria)) throw new InvalidCategoryExcetpion();
         if(!this.password.equals(passw)) throw new InvalidPasswordException();
         if(this.dataSet.get(categoria).contains(dato)) throw new DuplicateDataException();
+        if(dato == null || categoria == null) throw new NullPointerException();
 
         this.dataSet.get(categoria).add(dato);
         return this.dataSet.get(categoria).contains(dato);

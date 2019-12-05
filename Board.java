@@ -126,12 +126,14 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
      * @throws InvalidCategoryExcetpion if !this.elements.containsKey(categoria)
      * @throws InvalidPasswordException if !this.password.equals(passw)
      * @throws DuplicateDataException if this.elements.get(categoria).contains(dato)
+     * @throws NullPointerException if dato = null or Category = null
      * @effects post(this.el_i.data) = pre(this.el_i.dataSet) U dato
      */
-    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, DuplicateDataException, InvalidPasswordException {
+    public boolean put(String passw, E dato, String categoria) throws DuplicateDataException, InvalidCategoryExcetpion, DuplicateDataException, InvalidPasswordException, NullPointerException {
         if(!this.elements.containsKey(categoria)) throw new InvalidCategoryExcetpion();
         if(!this.password.equals(passw)) throw new InvalidPasswordException();
-        
+        if(dato == null || categoria == null) throw new NullPointerException();
+
         this.elements.get(categoria).addData(dato);
 
         return this.elements.get(categoria).contains(dato);
@@ -220,8 +222,10 @@ public class Board<E extends Data<?>> implements DataBoard<E> {
 
         SortedSet<E> bacheca = new TreeSet<E>(new SortByLikes());
 
-        for(Category<E> category : this.elements.values())
-            bacheca.addAll(category.getData());
+        for(Category<E> category : this.elements.values()) {
+            if(category.getData() != null)
+                bacheca.addAll(category.getData());
+        }
                 
         return Collections.unmodifiableSortedSet(bacheca).iterator();
     }

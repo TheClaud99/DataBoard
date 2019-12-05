@@ -81,6 +81,6 @@ class myData <E> implements Data<E>{
     }
 
     public Data<E> cloneData() {
-        return new myData<E>(this.getData());
+        return (Data<E>) new myData<E>(this.getData());
     }
 }
