@@ -170,7 +170,7 @@ let rec eval (e: exp) (r: evT env) : evT = match e with
                 match eFun with 
                 | ClosureArgs(args, fbody, fDecEnv) ->
                             (match eDic with
-                                | DicClosure(l) -> DicClosure(applyFoldToDict args fbody fDecEnv l)
+                                | DicClosure(l) -> applyFoldToDict args fbody fDecEnv l
                                 | _ -> failwith("Not a dictionary"))
                 | _ -> failwith("non functional value")
     and evalList (l : expList) (amb: evT env) = match l with
@@ -194,8 +194,8 @@ let rec eval (e: exp) (r: evT env) : evT = match e with
         | [] -> []
         | (key, value)::ls -> let newValue = eval fbody (bind fEnv arg value) in
             (key, newValue)::(applyToDict arg fbody fEnv ls)
-    and applyFoldToDict (args: ide list) (fbody: exp) (fEnv: evT env) (l: (ide * evT) list) = match l with
-        | [] -> 0
-        | (key, value)::ls -> let newEnv = bindlist fEnv args [(applyFoldToDict args fbody ide); value] in
+    and applyFoldToDict (args: ide list) (fbody: exp) (fEnv: evT env) (l: (ide * evT) list) : evT = match l with
+        | [] -> Int(0)
+        | (key, value)::ls -> let newEnv = bindlist fEnv args [(applyFoldToDict args fbody fEnv ls); value] in
             eval fbody newEnv
     ;;
