@@ -14,17 +14,26 @@ let e3 = Let("Magazzino", Dictionary(Assoc("mele", CstInt(430), Assoc("banane", 
     Iterate(Fun("x", Sum(Den("x"), CstInt(1))), Den("Magazzino"))
     );;
 
-let e4 = Let("Magazzino", 
-    Dictionary(Assoc("mele", CstInt(430), Assoc("banane", CstInt(312), Assoc("arance", CstInt(525), Assoc("pere", CstInt(217), Empty))))),
-        Fold(
-            FunArgs(
-                Ide("x", Ide("y", Empty)), 
-                Sum(Sum(Den("x"), Den("y")), CstInt(1))), 
-            Den("Magazzino"))
+let e4 = 
+    Let("Magazzino", 
+            Dictionary(Assoc("mele", CstInt(430), Assoc("banane", CstInt(312), Assoc("arance", CstInt(525), Assoc("pere", CstInt(217), Empty))))),
+            Fold(
+                FunArgs(
+                    Ide("x", Ide("y", Empty)), 
+                    Sum(Sum(Den("x"), Den("y")), CstInt(1))), 
+                Den("Magazzino"))
         );;
 
+let e5 = 
+    Let("Magazzino", 
+            Dictionary(Assoc("mele", CstInt(430), Assoc("banane", CstInt(312), Assoc("arance", CstInt(525), Assoc("pere", CstInt(217), Empty))))),
+            Filter(
+                Ide("mele", Ide("pere", Empty)),
+                Den("Magazzino"))
+        );;
 
 eval e [];;
 eval e2 [];;
 eval e3 [];;
 eval e4 [];;
+eval e5 [];;

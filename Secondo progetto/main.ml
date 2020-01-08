@@ -24,6 +24,7 @@ type exp =
     | HashKey of ide * exp
     | Iterate of exp * exp
     | Fold of exp * exp
+    | Filter of ideList * exp
     and expList = Empty | Exp of exp * expList
     and ideList = Empty | Ide of ide * ideList
     and assocList = Empty | Assoc of ide * exp * assocList
@@ -167,12 +168,17 @@ let rec eval (e: exp) (r: evT env) : evT = match e with
     | Fold(f, d) -> 
         let eDic = eval d r in
             let eFun = eval f r in
-                match eFun with 
+                (match eFun with 
                 | ClosureArgs(args, fbody, fDecEnv) ->
                             (match eDic with
                                 | DicClosure(l) -> applyFoldToDict args fbody fDecEnv l
                                 | _ -> failwith("Not a dictionary"))
-                | _ -> failwith("non functional value")
+                | _ -> failwith("non functional value"))
+    | Filter(keys, d) -> 
+        let eDic = eval d r in
+            (match eDic with
+            | DicClosure(l) -> DicClosure(filterList (ideListToList keys) l)
+            | _ -> failwith("Not a dictionary"))
     and evalList (l : expList) (amb: evT env) = match l with
         | Empty -> []
         | Exp(e, ls) -> (eval e amb)::(evalList ls amb)
@@ -196,6 +202,10 @@ let rec eval (e: exp) (r: evT env) : evT = match e with
             (key, newValue)::(applyToDict arg fbody fEnv ls)
     and applyFoldToDict (args: ide list) (fbody: exp) (fEnv: evT env) (l: (ide * evT) list) : evT = match l with
         | [] -> Int(0)
-        | (key, value)::ls -> let newEnv = bindlist fEnv args [(applyFoldToDict args fbody fEnv ls); value] in
+        | (key, value)::ls -> let newEnv = bindlist fEnv args [value; (applyFoldToDict args fbody fEnv ls)] in
             eval fbody newEnv
-    ;;
+    and filterList (filters: ide list) (l: (ide * evT) list) : (ide * evT) list = match l with
+        | [] -> []
+        | (key, value)::ls -> if (List.mem key filters) then (key, value)::(filterList filters ls)
+            else filterList filters ls
+;;
