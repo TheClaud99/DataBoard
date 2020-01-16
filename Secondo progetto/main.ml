@@ -13,18 +13,18 @@ type exp =
     | Not of exp
     | Den of ide
     | Ifthenelse of exp * exp * exp
-    | Let of ide * exp * exp (* Dichiarazione di ide: modifica ambiente *)
+    | Let of ide * exp * exp
     | Fun of ide * exp (* Astrazione di funzione *)
     | FunArgs of ideList * exp (* Astrazione di funzione a più parametri *)
     | Apply of exp * exp (* Applicazione di funzione *)
     | ApplyArgs of exp * expList (* Applicazione di funzione a più parametri*)
-    | Dictionary of assocList
-    | InsertDict of ide * exp * exp
-    | DeleteDict of ide * exp
-    | HashKey of ide * exp
-    | Iterate of exp * exp
-    | Fold of exp * exp
-    | Filter of ideList * exp
+    | Dictionary of assocList (* Dichiara un nuovo dizionario *)
+    | InsertDict of ide * exp * exp (* Inserisce nuova associazione all'interno del dizionario *)
+    | DeleteDict of ide * exp (* Rimuove associazione dal dizionario *)
+    | HashKey of ide * exp (* Controlla se una chiave è presente all'intero del dizionario *)
+    | Iterate of exp * exp (* Applica una funzione a tutti gli elementi del dizionario *)
+    | Fold of exp * exp (*  calcola il valore ottenuto applicando la funzione sequenzialmente a tutti gli elementi del dizionario *)
+    | Filter of ideList * exp (* restituisce solo le associazioni del dizionario che sono presenti anche all'interno della lista *)
     and expList = Empty | Exp of exp * expList
     and ideList = Empty | Ide of ide * ideList
     and assocList = Empty | Assoc of ide * exp * assocList
@@ -181,32 +181,32 @@ let rec eval (e: exp) (r: evT env) : evT = match e with
             (match eDic with
             | DicClosure(l) -> DicClosure(filterList (ideListToList keys) l)
             | _ -> failwith("Not a dictionary"))
-    and evalList (l : expList) (amb: evT env) = match l with
+    and evalList (l : expList) (amb: evT env) = match l with (* Valuta tutte le espressioni di una lista *)
         | Empty -> []
         | Exp(e, ls) -> (eval e amb)::(evalList ls amb)
-    and ideListToList (l: ideList) : ide list = match l with
+    and ideListToList (l: ideList) : ide list = match l with (* Converte una ideList in una ide list *)
         | Empty -> []
         | Ide(i, ls) -> i::(ideListToList ls)
-    and evalAssocList (l: assocList) (amb: evT env) = match l with
+    and evalAssocList (l: assocList) (amb: evT env) : (ide * evT) list = match l with (* Valuta una assocList per restituire una (ide * evT) list *)
         | Empty -> []
         | Assoc(i, e, ls) -> (i, (eval e amb))::(evalAssocList ls amb)
-    and checkIn (i: ide) (l: (ide * evT) list) : bool = match l with
+    and checkIn (i: ide) (l: (ide * evT) list) : bool = match l with (* Controlla se una chiave è contenuta in una lista di associazioni *)
         | [] -> false
         | (key, value)::ls -> if key = i then true
             else checkIn i ls
-    and deleteFromDict (i: ide) (l: (ide * evT) list) = match l with
+    and deleteFromDict (i: ide) (l: (ide * evT) list) : (ide * evT) list = match l with (* Elimina un elemento da una lista di associazioni chiave-valore *)
         | [] -> []
         | (key, value)::ls -> if (key = i) then deleteFromDict i ls
             else (key, value)::(deleteFromDict i ls)
-    and applyToDict (arg: ide) (fbody: exp) (fEnv: evT env) (l: (ide * evT) list) = match l with
+    and applyToDict (arg: ide) (fbody: exp) (fEnv: evT env) (l: (ide * evT) list)  : (ide * evT) list = match l with (* Applica una funzione a tutti gli elementi di una lista di associazioni *)
         | [] -> []
         | (key, value)::ls -> let newValue = eval fbody (bind fEnv arg value) in
             (key, newValue)::(applyToDict arg fbody fEnv ls)
-    and applyFoldToDict (args: ide list) (fbody: exp) (fEnv: evT env) (l: (ide * evT) list) : evT = match l with
+    and applyFoldToDict (args: ide list) (fbody: exp) (fEnv: evT env) (l: (ide * evT) list) : evT = match l with (* Applica la fold a una lista di associazioni *)
         | [] -> Int(0)
         | (key, value)::ls -> let newEnv = bindlist fEnv args [value; (applyFoldToDict args fbody fEnv ls)] in
             eval fbody newEnv
-    and filterList (filters: ide list) (l: (ide * evT) list) : (ide * evT) list = match l with
+    and filterList (filters: ide list) (l: (ide * evT) list) : (ide * evT) list = match l with (* Filtra gli elementi di una lista di associazioni *)
         | [] -> []
         | (key, value)::ls -> if (List.mem key filters) then (key, value)::(filterList filters ls)
             else filterList filters ls
