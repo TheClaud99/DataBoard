@@ -3,6 +3,7 @@ type exp =
     | CstInt of int
     | CstTrue
     | CstFalse
+    | CstString of string
     | Sum of exp * exp
     | Sub of exp * exp
     | Eq of exp * exp
@@ -101,6 +102,7 @@ let bool_not x = match (typecheck("bool",x), x) with
 
 let rec eval (e: exp) (r: evT env) : evT = match e with
     | CstInt(n) -> Int(n)
+    | CstString(s) -> String(s)
     | CstTrue -> Bool(true)
     | CstFalse -> Bool(false)
     | Den(i) -> applyenv (r,i)
