@@ -66,3 +66,42 @@ eval e3 (emptyenv(String("Unbound value")));;
 eval e4 (emptyenv(String("Unbound value")));;
 eval e5 (emptyenv(String("Unbound value")));;
 eval e6 (emptyenv(String("Unbound value")));;
+
+
+let e = 
+    Let("Magazzino", 
+        Dictionary
+            (Assoc("mele", CstInt(430), 
+                Assoc("banane", CstInt(312), 
+                    Assoc("arance", CstInt(525),
+                        Assoc("pere", CstInt(217), Empty))))),
+    InsertDict("kiwi", CstString("300"), Den("Magazzino")));;   (* Il dizionario supporta anche l'inserimento di tipi diversi *)
+
+eval e (emptyenv(String("Unbound value")));;
+
+let e = 
+    Let("Magazzino", 
+        Dictionary
+            (Assoc("mele", CstInt(430), 
+                Assoc("banane", CstInt(312), 
+                    Assoc("arance", CstInt(525),
+                        Assoc("pere", CstInt(217), Empty))))),
+    DeleteDict("kiwi", Den("Magazzino")));;   (* Passare a DeleteDict una chiave non presente produce un errore Unexisting key *)
+
+(* eval e (emptyenv(String("Unbound value")));; *)
+
+
+let e = 
+    Let("Magazzino", 
+		Dictionary
+			(Assoc("mele", CstInt(430), 
+				Assoc("banane", CstInt(312), 
+					Assoc("arance", CstInt(525), 
+						Assoc("pere", CstInt(217), Empty))))),
+		Fold
+			(FunArgs(
+				Ide("x", Ide("y", Ide("z", Empty))), 				(* Passare a Fold una funzione che prende un numero di parametri diverso da 2 produce un'eccezione *)
+				Sum(Sum(Den("x"), Den("y")), CstInt(1))), 
+			Den("Magazzino")));;
+
+(* eval e (emptyenv(String("Unbound value")));; *)
