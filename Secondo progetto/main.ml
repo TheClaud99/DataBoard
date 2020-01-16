@@ -170,10 +170,11 @@ let rec eval (e: exp) (r: evT env) : evT = match e with
         let eDic = eval d r in
             let eFun = eval f r in
                 (match eFun with 
-                | ClosureArgs(args, fbody, fDecEnv) ->
-                            (match eDic with
+                | ClosureArgs(args, fbody, fDecEnv) -> if ((List.length args) = 2)
+                            then (match eDic with
                                 | DicClosure(l) -> applyFoldToDict args fbody fDecEnv l
                                 | _ -> failwith("Not a dictionary"))
+                            else failwith("The function doesn't take 2 arguments")
                 | _ -> failwith("non functional value"))
     | Filter(keys, d) -> 
         let eDic = eval d r in
