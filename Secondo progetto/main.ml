@@ -1,9 +1,9 @@
 type ide = string;;
 type exp =
     | CstInt of int
+    | CstFloat of float
     | CstTrue
     | CstFalse
-    | Times of exp * exp
     | Sum of exp * exp
     | Sub of exp * exp
     | Eq of exp * exp
@@ -46,6 +46,7 @@ let rec bindlist (r: 't env) (il: ide list) (el: 't list) = match (il, el) with
 
 type evT = Int of int
     | Bool of bool
+    | Float of float
     | String of string
     | Closure of ide * exp * evT env
     | ClosureArgs of ide list * exp * evT env
@@ -102,6 +103,7 @@ let bool_not x = match (typecheck("bool",x), x) with
 
 let rec eval (e: exp) (r: evT env) : evT = match e with
     | CstInt(n) -> Int(n)
+    | CstFloat(n) -> Float(n)
     | CstTrue -> Bool(true)
     | CstFalse -> Bool(false)
     | Den(i) -> applyenv (r,i)
