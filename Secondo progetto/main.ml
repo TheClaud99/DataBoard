@@ -3,7 +3,6 @@ type exp =
     | CstInt of int
     | CstTrue
     | CstFalse
-    | Times of exp * exp
     | Sum of exp * exp
     | Sub of exp * exp
     | Eq of exp * exp
